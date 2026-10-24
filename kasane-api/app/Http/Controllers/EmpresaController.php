@@ -12,31 +12,16 @@ class EmpresaController extends Controller
      */
     public function index()
     {
-        //
+        return Empresa::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
     /**
      * Display the specified resource.
      */
     public function show(Empresa $empresa)
     {
-        //
+        return $empresa;
     }
 
     /**
@@ -52,7 +37,21 @@ class EmpresaController extends Controller
      */
     public function update(Request $request, Empresa $empresa)
     {
-        //
+        $dados = $request->validate([
+            'razao_social'          => ['sometimes', 'string', 'max:100'],
+            'cnpj'                  => ['sometimes', 'string', 'max:18', 'unique:empresas,cnpj,' . $empresa->empresa_id . ',empresa_id'],
+            'email'                 => ['sometimes', 'email', 'max:255'],
+            'telefone'              => ['sometimes', 'string', 'max:15'],
+            'cep'                   => ['sometimes', 'string', 'max:9'],
+            'rua'                   => ['sometimes', 'string', 'max:45'],
+            'bairro'                => ['sometimes', 'string', 'max:45'],
+            'cidade'                => ['sometimes', 'string', 'max:45'],
+            'numero'                => ['sometimes', 'integer'],
+            'quantidade_funcionarios' => ['sometimes', 'integer'],
+        ]);
+
+        $empresa->update($dados);
+        return $empresa;
     }
 
     /**
@@ -60,6 +59,7 @@ class EmpresaController extends Controller
      */
     public function destroy(Empresa $empresa)
     {
-        //
+        $empresa->delete();
+        return response()->json(null, 204);
     }
 }

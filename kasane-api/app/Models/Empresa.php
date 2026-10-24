@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Models;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Empresa extends Model
+class Empresa extends Authenticatable
 {
+    use HasApiTokens;
+
     protected $table = 'empresas';
     protected $primaryKey = 'empresa_id';
 

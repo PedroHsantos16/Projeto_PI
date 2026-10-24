@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setor extends Model
 {
-    protected $table = 'setores';
+    protected $table = 'setors';
     protected $primaryKey = 'setor_id';
 
     protected $fillable = ['nome', 'empresa_id', 'quantidade_funcionarios'];

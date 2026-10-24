@@ -12,15 +12,7 @@ class SetorController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return Setor::all();
     }
 
     /**
@@ -28,7 +20,15 @@ class SetorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dados = $request->validate([
+            'nome'                      => ['required', 'string', 'max:100'],
+            'empresa_id'                => ['required', 'integer', 'exists:empresas,empresa_id'],
+            'quantidade_funcionarios'   => ['sometimes', 'integer'],
+            'responsavel'               => ['sometimes', 'string', 'max:100'],
+        ]);
+
+        $setor = Setor::create($dados);
+        return response()->json($setor, 201);
     }
 
     /**
@@ -36,15 +36,7 @@ class SetorController extends Controller
      */
     public function show(Setor $setor)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Setor $setor)
-    {
-        //
+        return $setor;
     }
 
     /**
@@ -52,7 +44,15 @@ class SetorController extends Controller
      */
     public function update(Request $request, Setor $setor)
     {
-        //
+        $dados = $request->validate([
+            'nome'                      => ['sometimes', 'string', 'max:100'],
+            'empresa_id'                => ['sometimes', 'integer', 'exists:empresas,empresa_id'],
+            'quantidade_funcionarios'   => ['sometimes', 'integer'],
+            'responsavel'               => ['sometimes', 'string', 'max:100'],
+        ]);
+
+        $setor->update($dados);
+        return $setor;
     }
 
     /**
@@ -60,6 +60,7 @@ class SetorController extends Controller
      */
     public function destroy(Setor $setor)
     {
-        //
+        $setor->delete();
+        return response()->json(null, 204);
     }
 }

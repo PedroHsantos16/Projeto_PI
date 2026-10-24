@@ -12,7 +12,7 @@ class LembreteController extends Controller
      */
     public function index()
     {
-        //
+        return Lembrete::all();
     }
 
     /**
@@ -28,7 +28,16 @@ class LembreteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dados = $request->validate([
+            'titulo'            => ['required', 'string', 'max:45'],
+            'descricao'         => ['required', 'string'],
+            'horario'           => ['sometimes', 'date'],
+            'concluido'         => ['sometimes', 'boolean'],
+            'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+        ]);
+
+        $lembrete = Lembrete::create($dados);
+        return response()->json($lembrete, 201);
     }
 
     /**
@@ -36,7 +45,7 @@ class LembreteController extends Controller
      */
     public function show(Lembrete $lembrete)
     {
-        //
+        return $lembrete;
     }
 
     /**
@@ -52,7 +61,16 @@ class LembreteController extends Controller
      */
     public function update(Request $request, Lembrete $lembrete)
     {
-        //
+        $dados = $request->validate([
+            'titulo'            => ['sometimes', 'string', 'max:45'],
+            'descricao'         => ['sometimes', 'string'],
+            'horario'           => ['sometimes', 'date'],
+            'concluido'         => ['sometimes', 'boolean'],
+            'funcionario_id'    => ['sometimes', 'integer', 'exists:funcionarios,funcionario_id'],
+        ]);
+
+        $lembrete->update($dados);
+        return $lembrete;
     }
 
     /**
@@ -60,6 +78,7 @@ class LembreteController extends Controller
      */
     public function destroy(Lembrete $lembrete)
     {
-        //
+        $lembrete->delete();
+        return response()->json(null, 204);
     }
 }

@@ -1,0 +1,62 @@
+<?php
+
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ComentarioController;
+use App\Http\Controllers\EmpresaController;
+use App\Http\Controllers\FuncionarioController;
+use App\Http\Controllers\LembreteController;
+use App\Http\Controllers\PublicacaoController;
+use App\Http\Controllers\SalvoController; 
+use App\Http\Controllers\SetorController;
+use Illuminate\Support\Facades\Route;
+
+/*
+    Route::apiResource('tabelas', TabelaController::class);
+
+    Verbo HTTP	    URI / Caminho	      Ação (Método no Controller)	    Nome da Rota
+    GET	            /tabelas              index (Listar todos)	            tabela.index
+    POST	        /tabelas	          store (Criar novo)	            tabela.store
+    GET	            /tabelas/{tabela}	  show (Visualizar um)	            tabela.show
+    PUT/PATCH	    /tabelas/{tabela}	  update (Atualizar um)	            tabela.update
+    DELETE	        /tabelas/{tabela}	  destroy (Deletar um)	            tabela.destroy
+
+*/
+
+Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
+
+    Route::post('/registrar/empresa', [AuthController::class, 'register_empresa']);
+    Route::post('/login/empresa', [AuthController::class, 'login_empresa']);
+    
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout']);
+
+        Route::post('/registrar/funcionario', [AuthController::class, 'register_funcionario']);
+        Route::post('/login/funcionario', [AuthController::class, 'login_funcionario']);
+
+        Route::apiResource('empresas', EmpresaController::class)
+             ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+        Route::apiResource('setors', SetorController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+        Route::apiResource('funcionarios', FuncionarioController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+        Route::apiResource('publicacaos', PublicacaoController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+        Route::get('/vercomentarios/{publicacao_id}', [ComentarioController::class, 'index']);    
+        Route::apiResource('comentarios', ComentarioController::class)
+            ->only(['show', 'store', 'update', 'destroy']);
+
+        Route::apiResource('lembretes', LembreteController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+        Route::apiResource('salvos', SalvoController::class)
+            ->only(['index', 'show', 'store', 'update', 'destroy']);
+
+    });
+
+    
+});

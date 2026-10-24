@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Publicacao extends Model
 {
-    protected $table = 'publicacoes';
+    protected $table = 'publicacaos';
     protected $primaryKey = 'publicacao_id';
 
     protected $fillable = [
         'titulo', 'texto', 'autor', 'autor_foto', 'autor_setor', 'autor_cargo', 
-        'quantidade_comentarios'
+        'quantidade_comentarios', 'funcionario_id', 'setor_id'
     ];
 
     public function funcionarios()

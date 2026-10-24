@@ -10,9 +10,15 @@ class ComentarioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        
+        if($query = $request->query('publicacao_id'))
+        {
+            $query = Comentario::where('publicacao_id', $query);
+        } 
+        
+        return $query->all();
     }
 
     /**
@@ -20,7 +26,18 @@ class ComentarioController extends Controller
      */
     public function create()
     {
-        //
+        $dados = request()->validate([
+            'texto'             => ['required', 'string'],
+            'publicacao_id'     => ['required', 'integer', 'exists:publicacaos,publicacao_id'],
+            'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+            'autor'             => ['sometimes', 'string', 'max:100'],
+            'autor_foto'        => ['sometimes', 'string', 'max:300'],
+            'autor_setor'       => ['sometimes', 'string', 'max:45'],
+            'autor_cargo'       => ['sometimes', 'string', 'max:45'],
+        ]);
+
+        $comentario = Comentario::create($dados);
+        return response()->json($comentario, 201);
     }
 
     /**
@@ -36,7 +53,7 @@ class ComentarioController extends Controller
      */
     public function show(Comentario $comentario)
     {
-        //
+        return $comentario;
     }
 
     /**
@@ -52,7 +69,18 @@ class ComentarioController extends Controller
      */
     public function update(Request $request, Comentario $comentario)
     {
-        //
+        $dados = $request->validate([
+            'texto'             => ['sometimes', 'string'],
+            'publicacao_id'     => ['sometimes', 'integer', 'exists:publicacoes,publicacao_id'],
+            'funcionario_id'    => ['sometimes', 'integer', 'exists:funcionarios,funcionario_id'],
+            'autor'             => ['sometimes', 'string', 'max:100'],
+            'autor_foto'        => ['sometimes', 'string', 'max:300'],
+            'autor_setor'       => ['sometimes', 'string', 'max:45'],
+            'autor_cargo'       => ['sometimes', 'string', 'max:45'],
+        ]);
+
+        $comentario->update($dados);
+        return $comentario;
     }
 
     /**
@@ -60,6 +88,7 @@ class ComentarioController extends Controller
      */
     public function destroy(Comentario $comentario)
     {
-        //
+        $comentario->delete();
+        return response()->json(null, 204);
     }
 }

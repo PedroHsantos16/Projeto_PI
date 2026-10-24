@@ -12,31 +12,36 @@ class PublicacaoController extends Controller
      */
     public function index()
     {
-        //
+        return Publicacao::all();
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function store()
     {
-        //
+        $dados = request()->validate([
+            'titulo'            => ['required', 'string', 'max:255'],
+            'texto'             => ['required', 'string'],
+            'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+            'setor_id'          => ['required', 'integer', 'exists:setors,setor_id'],
+            'autor'             => ['sometimes', 'string', 'max:100'],
+            'autor_foto'        => ['sometimes', 'string', 'max:300'],
+            'autor_setor'       => ['sometimes', 'string', 'max:45'],
+            'autor_cargo'       => ['sometimes', 'string', 'max:45'],
+        ]);
+
+        $publicacao = Publicacao::create($dados);
+        return response()->json($publicacao, 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
+   
     /**
      * Display the specified resource.
      */
     public function show(Publicacao $publicacao)
     {
-        //
+        return $publicacao;
     }
 
     /**
@@ -52,7 +57,19 @@ class PublicacaoController extends Controller
      */
     public function update(Request $request, Publicacao $publicacao)
     {
-        //
+        $dados = $request->validate([
+            'titulo'            => ['sometimes', 'string', 'max:255'],
+            'texto'             => ['sometimes', 'text'],
+            'funcionario_id'    => ['sometimes', 'integer', 'exists:funcionarios,funcionario_id'],
+            'setor_id'          => ['sometimes', 'integer', 'exists:setores,setor_id'],
+            'autor'             => ['sometimes', 'string', 'max:100'],
+            'autor_foto'        => ['sometimes', 'string', 'max:300'],
+            'autor_setor'       => ['sometimes', 'string', 'max:45'],
+            'autor_cargo'       => ['sometimes', 'string', 'max:45'],
+        ]);
+
+        $publicacao->update($dados);
+        return $publicacao;
     }
 
     /**
@@ -60,6 +77,7 @@ class PublicacaoController extends Controller
      */
     public function destroy(Publicacao $publicacao)
     {
-        //
+        $publicacao->delete();
+        return response()->json(null, 204);
     }
 }

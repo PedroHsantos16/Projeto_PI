@@ -12,23 +12,7 @@ class FuncionarioController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+        return Funcionario::all();
     }
 
     /**
@@ -36,7 +20,7 @@ class FuncionarioController extends Controller
      */
     public function show(Funcionario $funcionario)
     {
-        //
+        return $funcionario;
     }
 
     /**
@@ -52,7 +36,22 @@ class FuncionarioController extends Controller
      */
     public function update(Request $request, Funcionario $funcionario)
     {
-        //
+        $dados = $request->validate([
+            'nome'           => ['sometimes', 'string', 'max:100'],
+            'email'          => ['sometimes', 'email', 'max:100', 'unique:funcionarios,email,' . $funcionario->funcionario_id . ',funcionario_id'],
+            'telefone'       => ['sometimes', 'string', 'max:15', 'unique:funcionarios,telefone,' . $funcionario->funcionario_id . ',funcionario_id'],
+            'cpf'            => ['sometimes', 'string', 'max:14', 'unique:funcionarios,cpf,' . $funcionario->funcionario_id . ',funcionario_id'],
+            'cargo'          => ['sometimes', 'string', 'max:45'],
+            'tipo_conta'     => ['sometimes', 'string', 'max:45'],
+            'empresa_id'     => ['sometimes', 'integer', 'exists:empresas,empresa_id'],
+            'setor_id'       => ['sometimes', 'integer', 'exists:setores,setor_id'],
+            'sexo'           => ['sometimes', 'string', 'max:10'],
+            'foto'           => ['sometimes', 'string'],
+            'ramal'          => ['sometimes', 'string', 'max:10'],
+        ]);
+
+        $funcionario->update($dados);
+        return $funcionario;
     }
 
     /**
@@ -60,6 +59,7 @@ class FuncionarioController extends Controller
      */
     public function destroy(Funcionario $funcionario)
     {
-        //
+        $funcionario->delete();
+        return response()->json(null, 204);
     }
 }
