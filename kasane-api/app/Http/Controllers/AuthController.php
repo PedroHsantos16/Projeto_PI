@@ -12,6 +12,12 @@ class AuthController extends Controller
 {
     public function register_funcionario(Request $request)
     {
+        $empresa = $request->user();
+
+        if (! $empresa instanceof Empresa) {
+            return response()->json(['erro' => 'Apenas empresas podem cadastrar funcionários.'], 403);
+        }
+
         $dados = $request->validate([
             'nome'           => ['required', 'string', 'max:100'],
             'email'          => ['required', 'email', 'max:100', 'unique:funcionarios,email'],
@@ -19,7 +25,6 @@ class AuthController extends Controller
             'cpf'            => ['required', 'string', 'max:14', 'unique:funcionarios,cpf'],
             'cargo'          => ['required', 'string', 'max:45'],
             'tipo_conta'     => ['required', 'string', 'max:45'],
-            'empresa_id'     => ['required', 'integer', 'exists:empresas,empresa_id'],
             'setor_id'       => ['required', 'integer', 'exists:setors,setor_id'],
             'sexo'           => ['sometimes', 'string', 'max:1'],
             'foto'           => ['sometimes', 'string', 'max:300'],
@@ -34,7 +39,7 @@ class AuthController extends Controller
             'cpf'             => $dados['cpf'],
             'cargo'           => $dados['cargo'],
             'tipo_conta'      => $dados['tipo_conta'],
-            'empresa_id'      => $dados['empresa_id'],
+            'empresa_id'      => $empresa->empresa_id,
             'setor_id'        => $dados['setor_id'],
             'sexo'            => $dados['sexo'] ?? null,
             'foto'            => $dados['foto'] ?? null,
@@ -42,10 +47,7 @@ class AuthController extends Controller
             'senha_hash'      => Hash::make($dados['senha'])
         ]);
 
-        $nomeToken = $funcionario->nome . '-' . now()->timestamp;
-        $token = $funcionario->createToken($nomeToken)->plainTextToken;
-
-        return response()->json(['funcionario' => $funcionario, 'token' => $token, 'mensagem' => 'Registro realizado com sucesso.'], 201);
+        return response()->json(['funcionario' => $funcionario, 'mensagem' => 'Registro realizado com sucesso.'], 201);
     }
 
     public function register_empresa(Request $request)
@@ -81,41 +83,48 @@ class AuthController extends Controller
     }
 
     public function login_funcionario(Request $request)
-    {
-        // Talvez mudar password para senha
-        $credenciais = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'], 
-        ]);
+{
+    $credenciais = $request->validate([
+        'email' => ['required', 'email'],
+        'senha' => ['required', 'string'],
+    ]);
 
-        if (! Auth::attempt($credenciais)) {
-            return response()->json(['erro' => 'Credenciais inválidas.'], 401);
-        }
+    $funcionario = Funcionario::where('email', $credenciais['email'])->first();
 
-        $funcionario = Auth::user();
-        $nomeToken = $funcionario->nome . '-' . now()->timestamp;
-        $token = $funcionario->createToken($nomeToken)->plainTextToken;
-
-        return response()->json(['funcionario' => $funcionario, 'token' => $token, 'mensagem' => 'Login realizado com sucesso.']);
+    if (! $funcionario || ! Hash::check($credenciais['senha'], $funcionario->senha_hash)) {
+        return response()->json(['erro' => 'Credenciais inválidas.'], 401);
     }
 
-    public function login_empresa(Request $request)
-    {
-        $credenciais = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'], 
-        ]);
+    $token = $funcionario->createToken($funcionario->nome . '-' . now()->timestamp)->plainTextToken;
 
-        if (! Auth::attempt($credenciais)) {
-            return response()->json(['erro' => 'Credenciais inválidas.'], 401);
-        }
+    return response()->json([
+        'funcionario' => $funcionario,
+        'token'       => $token,
+        'mensagem'    => 'Login realizado com sucesso.',
+    ]);
+}
 
-        $empresa = Auth::user();
-        $nomeToken = $empresa->razao_social . '-' . now()->timestamp;
-        $token = $empresa->createToken($nomeToken)->plainTextToken;
+public function login_empresa(Request $request)
+{
+    $credenciais = $request->validate([
+        'email' => ['required', 'email'],
+        'senha' => ['required', 'string'],
+    ]);
 
-        return response()->json(['empresa' => $empresa, 'token' => $token, 'mensagem' => 'Login realizado com sucesso.']);
+    $empresa = Empresa::where('email', $credenciais['email'])->first();
+
+    if (! $empresa || ! Hash::check($credenciais['senha'], $empresa->senha_hash)) {
+        return response()->json(['erro' => 'Credenciais inválidas.'], 401);
     }
+
+    $token = $empresa->createToken($empresa->razao_social . '-' . now()->timestamp)->plainTextToken;
+
+    return response()->json([
+        'empresa'  => $empresa,
+        'token'    => $token,
+        'mensagem' => 'Login realizado com sucesso.',
+    ]);
+}
 
     public function logout(Request $request)
     {

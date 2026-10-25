@@ -10,9 +10,19 @@ class LembreteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Lembrete::all();
+        /*
+            $query = Lembrete::query();
+            $funcionario_id = $request->query('funcionario_id');
+            $query->where('funcionario_id', $funcionario_id);
+            $query->where('concluido', false);
+
+            return $query->get();
+        */
+        
+        $funcionario = $request->user();
+        return Lembrete::where('funcionario_id', $funcionario->funcionario_id)->where('concluido', false)->get();
     }
 
     /**
@@ -28,15 +38,24 @@ class LembreteController extends Controller
      */
     public function store(Request $request)
     {
+        $funcionario = $request->user();
+
         $dados = $request->validate([
             'titulo'            => ['required', 'string', 'max:45'],
             'descricao'         => ['required', 'string'],
             'horario'           => ['sometimes', 'date'],
             'concluido'         => ['sometimes', 'boolean'],
-            'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+            //'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
         ]);
 
-        $lembrete = Lembrete::create($dados);
+        $lembrete = Lembrete::create([
+            'titulo'            => $dados['titulo'],
+            'descricao'         => $dados['descricao'],
+            'horario'           => $dados['horario'] ?? null,
+            'concluido'         => $dados['concluido'] ?? false,
+            'funcionario_id'    => $funcionario->funcionario_id,
+        ]);
+        
         return response()->json($lembrete, 201);
     }
 

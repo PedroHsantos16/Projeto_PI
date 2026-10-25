@@ -10,9 +10,10 @@ class SetorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Setor::all();
+        $empresa = $request->user();
+        return Setor::where('empresa_id', $empresa->empresa_id)->get();
     }
 
     /**
@@ -20,14 +21,25 @@ class SetorController extends Controller
      */
     public function store(Request $request)
     {
+        $empresa = $request->user();
+
+        if (! $empresa instanceof Empresa) {
+            return response()->json(['erro' => 'Apenas empresas podem cadastrar funcionários.'], 403);
+        }
+
         $dados = $request->validate([
             'nome'                      => ['required', 'string', 'max:100'],
-            'empresa_id'                => ['required', 'integer', 'exists:empresas,empresa_id'],
-            'quantidade_funcionarios'   => ['sometimes', 'integer'],
-            'responsavel'               => ['sometimes', 'string', 'max:100'],
+            //'empresa_id'                => ['required', 'integer', 'exists:empresas,empresa_id'],
+            //'quantidade_funcionarios'   => ['sometimes', 'integer'],
+            //'responsavel'               => ['sometimes', 'string', 'max:100'],
         ]);
 
-        $setor = Setor::create($dados);
+        $setor = Setor::create([
+            'nome'                      => $dados['nome'],
+            'empresa_id'                => $empresa->empresa_id,
+            //'responsavel'               => $dados['responsavel'],
+        ]
+        );
         return response()->json($setor, 201);
     }
 

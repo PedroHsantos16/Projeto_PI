@@ -12,6 +12,8 @@ class ComentarioController extends Controller
      */
     public function index(Request $request)
     {
+        /* 
+        $query = Comentario::query();
         
         if($query = $request->query('publicacao_id'))
         {
@@ -19,25 +21,19 @@ class ComentarioController extends Controller
         } 
         
         return $query->all();
+        */
+        
+        Return Comentario::where('publicacao_id', $request->query('publicacao_id'))->get();
     }
 
+
+    
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $dados = request()->validate([
-            'texto'             => ['required', 'string'],
-            'publicacao_id'     => ['required', 'integer', 'exists:publicacaos,publicacao_id'],
-            'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
-            'autor'             => ['sometimes', 'string', 'max:100'],
-            'autor_foto'        => ['sometimes', 'string', 'max:300'],
-            'autor_setor'       => ['sometimes', 'string', 'max:45'],
-            'autor_cargo'       => ['sometimes', 'string', 'max:45'],
-        ]);
-
-        $comentario = Comentario::create($dados);
-        return response()->json($comentario, 201);
+        
     }
 
     /**
@@ -45,7 +41,29 @@ class ComentarioController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $funcionario = $request->user();
+
+        $dados = request()->validate([
+            'texto'             => ['required', 'string'],
+            'publicacao_id'     => ['required', 'integer', 'exists:publicacaos,publicacao_id'],
+            //'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+            //'autor'             => ['sometimes', 'string', 'max:100'],
+            //'autor_foto'        => ['sometimes', 'string', 'max:300'],
+            //'autor_setor'       => ['sometimes', 'string', 'max:45'],
+            //'autor_cargo'       => ['sometimes', 'string', 'max:45'],
+        ]);
+
+        $comentario = Comentario::create([
+            'texto'             => $dados['texto'],
+            'publicacao_id'     => $dados['publicacao_id'],
+            'funcionario_id'    => $funcionario->funcionario_id,
+            'autor'             => $funcionario->nome,
+            'autor_foto'        => $funcionario->foto ?? null,
+            'autor_setor'       => $funcionario->setors->nome,
+            'autor_cargo'       => $funcionario->cargo,
+        ]);
+
+        return response()->json($comentario, 201);
     }
 
     /**

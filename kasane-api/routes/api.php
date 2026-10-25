@@ -26,36 +26,27 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
 
     Route::post('/registrar/empresa', [AuthController::class, 'register_empresa']);
     Route::post('/login/empresa', [AuthController::class, 'login_empresa']);
-    
+    Route::post('/login/funcionario', [AuthController::class, 'login_funcionario']);
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
 
         Route::post('/registrar/funcionario', [AuthController::class, 'register_funcionario']);
-        Route::post('/login/funcionario', [AuthController::class, 'login_funcionario']);
+        
+        Route::apiResource('empresas', EmpresaController::class);
 
-        Route::apiResource('empresas', EmpresaController::class)
-             ->only(['index', 'show', 'store', 'update', 'destroy']);
+        Route::apiResource('setors', SetorController::class);
 
-        Route::apiResource('setors', SetorController::class)
-            ->only(['index', 'show', 'store', 'update', 'destroy']);
+        Route::apiResource('funcionarios', FuncionarioController::class);
 
-        Route::apiResource('funcionarios', FuncionarioController::class)
-            ->only(['index', 'show', 'store', 'update', 'destroy']);
+        Route::apiResource('publicacaos', PublicacaoController::class);
 
-        Route::apiResource('publicacaos', PublicacaoController::class)
-            ->only(['index', 'show', 'store', 'update', 'destroy']);
+        // Route::get('/vercomentarios', [ComentarioController::class, 'index']);    
+        Route::apiResource('comentarios', ComentarioController::class);
 
-        Route::get('/vercomentarios/{publicacao_id}', [ComentarioController::class, 'index']);    
-        Route::apiResource('comentarios', ComentarioController::class)
-            ->only(['show', 'store', 'update', 'destroy']);
+        Route::apiResource('lembretes', LembreteController::class);
 
-        Route::apiResource('lembretes', LembreteController::class)
-            ->only(['index', 'show', 'store', 'update', 'destroy']);
-
-        Route::apiResource('salvos', SalvoController::class)
-            ->only(['index', 'show', 'store', 'update', 'destroy']);
-
+        Route::apiResource('salvos', SalvoController::class);
     });
 
     

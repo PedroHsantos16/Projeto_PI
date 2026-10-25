@@ -10,28 +10,51 @@ class PublicacaoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Publicacao::all();
+        
+        $funcionario = $request->user();
+        $query = $request->query('setor');
+
+        if($query == 'geral')
+        {
+            return Publicacao::where('setor_id', $funcionario->empresas->setor_geral)->get();
+        }
+        else
+        {
+            return Publicacao::where('setor_id', $funcionario->setor_id)->get();
+        }
+        
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function store()
+    public function store(Request $request)
     {
+        $funcionario = $request->user();
+
         $dados = request()->validate([
             'titulo'            => ['required', 'string', 'max:255'],
             'texto'             => ['required', 'string'],
-            'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
             'setor_id'          => ['required', 'integer', 'exists:setors,setor_id'],
-            'autor'             => ['sometimes', 'string', 'max:100'],
-            'autor_foto'        => ['sometimes', 'string', 'max:300'],
-            'autor_setor'       => ['sometimes', 'string', 'max:45'],
-            'autor_cargo'       => ['sometimes', 'string', 'max:45'],
+            //'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+            //'autor'             => ['sometimes', 'string', 'max:100'],
+            //'autor_foto'        => ['sometimes', 'string', 'max:300'],
+            //'autor_setor'       => ['sometimes', 'string', 'max:45'],
+            //'autor_cargo'       => ['sometimes', 'string', 'max:45'],
         ]);
 
-        $publicacao = Publicacao::create($dados);
+        $publicacao = Publicacao::create([
+            'titulo'            => $dados['titulo'],
+            'texto'             => $dados['texto'],
+            'funcionario_id'    => $funcionario->funcionario_id,
+            'setor_id'          => $dados['setor_id'],
+            'autor'             => $funcionario->nome,
+            'autor_foto'        => $funcionario->foto ?? null,
+            'autor_setor'       => $funcionario->setors->nome,
+            'autor_cargo'       => $funcionario->cargo,
+        ]);
         return response()->json($publicacao, 201);
     }
 
@@ -59,7 +82,7 @@ class PublicacaoController extends Controller
     {
         $dados = $request->validate([
             'titulo'            => ['sometimes', 'string', 'max:255'],
-            'texto'             => ['sometimes', 'text'],
+            'texto'             => ['sometimes', 'string'],
             'funcionario_id'    => ['sometimes', 'integer', 'exists:funcionarios,funcionario_id'],
             'setor_id'          => ['sometimes', 'integer', 'exists:setores,setor_id'],
             'autor'             => ['sometimes', 'string', 'max:100'],

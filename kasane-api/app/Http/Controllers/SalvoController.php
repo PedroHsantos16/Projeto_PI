@@ -10,9 +10,10 @@ class SalvoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $funcionario = $request->user();
+        return Salvo::where('funcionario_id', $funcionario->funcionario_id)->get();
     }
 
     /**
@@ -28,7 +29,19 @@ class SalvoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $funcionario = $request->user();
+
+        $dados = request()->validate([
+            //'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+            'publicacao_id'     => ['required', 'integer', 'exists:publicacaos,publicacao_id'],
+        ]);
+
+        $salvo = Salvo::create([
+            'funcionario_id'    => $funcionario->funcionario_id,
+            'publicacao_id'     => $dados['publicacao_id'],
+        ]);
+        
+        return response()->json($salvo, 201);
     }
 
     /**
@@ -36,7 +49,7 @@ class SalvoController extends Controller
      */
     public function show(Salvo $salvo)
     {
-        //
+        return $salvo;
     }
 
     /**
@@ -52,7 +65,13 @@ class SalvoController extends Controller
      */
     public function update(Request $request, Salvo $salvo)
     {
-        //
+        $dados = request()->validate([
+            'funcionario_id'    => ['sometimes', 'integer', 'exists:funcionarios,funcionario_id'],
+            'publicacao_id'     => ['sometimes', 'integer', 'exists:publicacaos,publicacao_id'],
+        ]);
+
+        $salvo->update($dados);
+        return $salvo;
     }
 
     /**
@@ -60,6 +79,7 @@ class SalvoController extends Controller
      */
     public function destroy(Salvo $salvo)
     {
-        //
+        $salvo->delete();
+        return response()->json(null, 204);
     }
 }
