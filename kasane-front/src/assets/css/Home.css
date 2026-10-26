@@ -91,6 +91,7 @@
     height: 42px;
     border-radius: 999px;         
     font-weight: 600;
+    box-shadow: #1D1916;
 }
 
 .btn-primary 
