@@ -7,7 +7,7 @@ import users from '../assets/users.svg'
 import BuildingComplex from '../assets/building-complex.svg'
 import arrow from '../assets/arrow-right.svg'
 
-function Home() {
+export default function Home() {
   
   return (
     <>
@@ -46,4 +46,3 @@ function Home() {
   )
 }
 
-export default Home

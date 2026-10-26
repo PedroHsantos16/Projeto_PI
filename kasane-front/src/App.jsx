@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import Home from './pages/Home';
-import CadastroEmpresa from './pages/CadastroEmpresa'
-import LoginEmpresa from './pages/LoginEmpresa'
-import LoginFuncionario from './pages/LoginFuncionario'
-import Publicacoes from './pages/Publicacoes'
-import AdminFunc from './pages/AdminFunc'
-import AdminSetor from './pages/AdminSetor'
+import CadastroEmpresa from './pages/CadastroEmpresa';
+import LoginEmpresa from './pages/LoginEmpresa';
+import LoginFuncionario from './pages/LoginFuncionario';
+import Publicacoes from './pages/Publicacoes';
+import AdminFunc from './pages/AdminFunc';
+import AdminSetor from './pages/AdminSetor';
 
 function App() {
 
@@ -21,7 +21,7 @@ function App() {
         <Route path="/AdminFunc" element={<AdminFunc />} />
         <Route path="/AdminSetor" element={<AdminSetor />} />
       </Routes>
-  )
+  );
 }
 
 export default App
