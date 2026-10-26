@@ -1,0 +1,107 @@
+.HomeGrid
+{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    min-height: 100vh;
+    min-width: 100vw;
+}
+
+.gridLogo
+{
+    background-color: #A73141;
+    display: flex;
+    flex-direction: column;
+    padding: 48px;
+    color: #F1F1F1;
+}
+
+.LogoImg
+{
+    max-width: 280px; 
+    margin-inline: auto;
+}
+
+.LogoText
+{
+    margin-top: auto;
+    max-width: 280px;
+}
+
+.gridPanel
+{
+    position: relative;
+    background: #e9e3dc url("../BackgroundOndulado.svg") center / cover no-repeat;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 56px;
+}
+
+.panel-inner 
+{
+    margin-block: auto;               
+    max-width: 740px;
+}
+
+.cards 
+{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.card 
+{
+    background: #f2f1f1;
+    border-radius: 24px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card p 
+{
+    font-size: 14px;
+    color: #746B65;
+}
+
+.card h3
+{
+    font-size: 22px;
+    color: #1D1916;
+}
+
+.card .icon 
+{
+    padding: 8px;
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: #f6dfe2;
+    display: grid; 
+    place-items: center;
+}
+
+.btn 
+{
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 8px;
+    height: 42px;
+    border-radius: 999px;         
+    font-weight: 600;
+}
+
+.btn-primary 
+{ 
+    background: #722b34; 
+    color: #fff; 
+}
+.btn-outline 
+{ 
+    border: 1px solid #ddd; 
+    background: transparent; 
+    color: #722b34; 
+}
+
