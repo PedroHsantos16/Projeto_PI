@@ -1,48 +1,105 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import '../assets/css/Home.css'
-import KasaneLogo from '../assets/TetoLogo.svg'
-import KasaneTexto from '../assets/KasaneTexto.svg'
-import users from '../assets/users.svg'
-import BuildingComplex from '../assets/building-complex.svg'
-import arrow from '../assets/arrow-right.svg'
+import { useNavigate } from 'react-router-dom';
+import '../assets/css/Home.css';
+import KasaneLogo from '../assets/KasaneLogo.svg';
+import ArrowIcon from '../components/ArrowIcon';
+import { UsersRound, BuildingComplex } from "lucide-react"
 
-export default function Home() {
-  
+function Home() {
+  const navigate = useNavigate();
+
   return (
-    <>
-      <div className="HomeGrid">
-            <div className="gridLogo">
-                <img src={KasaneLogo} alt="Logo" className="LogoImg"/>
-                <img src={KasaneTexto} alt="Logo" className="LogoText"/>
-                <h1>Boas conversas.</h1> 
-                <h1>Grandes conexões.</h1>
-                <p>Um lugar para organizar pessoas, compartilhar avisos e fazer o trabalho acontecer. Juntos.</p>
-                <hr />
-                <small>Sua empresa, mais conectada.</small>
-            </div>
+    <main className="welcome">
+      {/* Painel vermelho lateral */}
+      <aside className="welcome__brand">
+        <img className="welcome__logo" src={KasaneLogo} alt="Kasane" />
 
-            <div className="gridPanel">
-               <div className="panel-inner">
-                    <div className="cards">
-                        <div className="card">
-                            <img src={users} alt="Logo" className="icon"/>
-                            <p>Entre na sua comunidade e acompanhe o que acontece na empresa.</p>
-                            <h3>Sou Funcionário</h3>
-                            <button className="btn btn-primary">Entrar</button>
-                        </div>
-                        <div className="card">
-                            <svg src={BuildingComplex} alt="Logo" className="icon"/>
-                            <p>Conecte sua equipe e organize a comunicação da sua empresa.</p>
-                            <h3>Sou Empresa</h3>
-                            <button className="btn btn-primary"><img src={arrow}/>Entrar</button>
-                            <button className="btn btn-outline">Cadastrar</button>
-                        </div>
-                    </div>
-               </div>
+        <div className="welcome__brand-text">
+          <h2 className="welcome__brand-title">
+            Boas conversas.
+            <br />
+            Grandes conexões.
+          </h2>
+          <p className="welcome__brand-description">
+            Um lugar para organizar pessoas, compartilhar avisos e fazer o
+            trabalho acontecer. Juntos.
+          </p>
+          <hr className="welcome__brand-divider" />
+          <p className="welcome__brand-tagline">Sua empresa, mais conectada.</p>
+        </div>
+      </aside>
+
+      {/* Área de conteúdo */}
+      <section className="welcome__content">
+        <p className="eyebrow eyebrow--dark welcome__topbar">Bem-vindo ao Kasane</p>
+
+        <div className="welcome__main">
+          <div className="welcome__inner">
+            <p className="eyebrow">Um espaço para a sua equipe</p>
+            <h1 className="welcome__title">
+              Sua próxima conexão
+              <br />
+              começa aqui.
+            </h1>
+            <p className="welcome__description">
+              Novidades da empresa, mensagens do seu setor e lembretes
+              importantes. Tudo junto, para sua conveniência.
+            </p>
+
+            <div className="welcome__cards">
+              {/* Card: funcionário */}
+              <article className="access-card">
+                <div className="access-card__icon">
+                  <UsersRound size={100} />
+                </div>
+                <p className="access-card__text">
+                  Entre na sua comunidade e acompanhe o que acontece na empresa.
+                </p>
+                <h2 className="access-card__title">Sou funcionário</h2>
+                <div className="access-card__actions">
+                  <button
+                    type="button"
+                    className="btn btn--primary btn--block"
+                    onClick={() => navigate('/LoginFuncionario')}
+                  >
+                    <ArrowIcon />
+                    Entrar
+                  </button>
+                </div>
+              </article>
+
+              {/* Card: empresa */}
+              <article className="access-card">
+                <div className="access-card__icon">
+                  <BuildingComplex />
+                </div>
+                <p className="access-card__text">
+                  Conecte sua equipe e organize a comunicação da sua empresa.
+                </p>
+                <h2 className="access-card__title">Sou empresa</h2>
+                <div className="access-card__actions">
+                  <button
+                    type="button"
+                    className="btn btn--primary btn--block"
+                    onClick={() => navigate('/LoginEmpresa')}
+                  >
+                    <ArrowIcon />
+                    Entrar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn--outline btn--block"
+                    onClick={() => navigate('/CadastroEmpresa')}
+                  >
+                    Cadastrar
+                  </button>
+                </div>
+              </article>
             </div>
-      </div>
-    </>
-  )
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }
 
+export default Home;

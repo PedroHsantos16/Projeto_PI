@@ -1,0 +1,244 @@
+
+:root {
+  /* Cores */
+  --color-primary: #A73141;
+  --color-primary-dark: #6F2C33;
+  --color-neutral: #B5A299;
+  --color-dark: #1D1916;
+  --color-beige: #E8E3DD;
+  --color-light: #F1F1F1;
+  --color-white: #FFFFFF;
+  --color-text-muted: rgba(29, 25, 22, 0.6);
+  --color-primary-soft: rgba(167, 49, 65, 0.1);
+
+  /* Tipografia */
+  --font-main: 'Inter', sans-serif;
+
+  /* Layout */
+  --container-max: 1440px;
+  --container-padding: clamp(1.5rem, 5vw, 6rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: clamp(14px, 1.111vw, 22px);
+}
+
+body {
+  font-family: var(--font-main);
+  color: var(--color-dark);
+  background-color: var(--color-light);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul {
+  list-style: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font: inherit;
+  color: inherit;
+}
+
+#root {
+  min-height: 100vh;
+  text-align: left;
+}
+
+/* Container reutilizável: centraliza o conteúdo e limita a largura */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+/* ---------- Reutilizáveis ---------- */
+
+/* Texto pequeno em caixa alta (rótulos e "eyebrows") */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+.eyebrow--dark {
+  color: var(--color-primary-dark);
+}
+
+/* Botão base (pílula) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding-inline: 1.5rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--primary {
+  background-color: var(--color-primary-dark);
+  color: var(--color-light);
+}
+
+.btn--primary:hover {
+  background-color: var(--color-primary);
+}
+
+.btn--outline {
+  border: 1px solid var(--color-beige);
+  color: var(--color-primary-dark);
+}
+
+.btn--outline:hover {
+  background-color: var(--color-beige);
+}
+
+/* ---------- Formulários ---------- */
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.form-field__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Envolve o input quando ele precisa de um ícone/botão à direita */
+.input-wrapper {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  height: 2.875rem;
+  padding: 0 0.875rem;
+  border: 1px solid var(--color-beige);
+  border-radius: 0.5rem;
+  background-color: var(--color-white);
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--color-dark);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+/* Reserva espaço para o ícone à direita */
+.input--icon {
+  padding-right: 2.75rem;
+}
+
+/* Ícone decorativo (ex.: prédio) e botão de ação (ex.: mostrar senha) */
+.input-wrapper__icon,
+.input-wrapper__action {
+  position: absolute;
+  top: 50%;
+  right: 0.875rem;
+  display: flex;
+  transform: translateY(-50%);
+  color: var(--color-text-muted);
+}
+
+.input-wrapper__icon {
+  pointer-events: none;
+}
+
+.input-wrapper__action:hover {
+  color: var(--color-primary-dark);
+}
+
+.input-wrapper__icon svg,
+.input-wrapper__action svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+/* ---------- Links ---------- */
+
+/* Link "← Voltar" (a seta é o ArrowIcon girado) */
+.link-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-primary-dark);
+  transition: color 0.2s ease;
+}
+
+.link-back svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  transform: rotate(180deg);
+}
+
+.link-back:hover {
+  color: var(--color-primary);
+}
+
+/* Link de destaque dentro de um texto ("Entrar") */
+.link-inline {
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.link-inline:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}

@@ -1,0 +1,20 @@
+/* ============================================
+   Página: Cadastro de empresa
+   Apenas o que é específico desta tela
+   ============================================ */
+
+/* Linha com dois campos de mesma largura */
+.register__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+/* Linha Bairro (largo) + Número (estreito) */
+.register__row--address {
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+}
+
+.register__submit {
+  margin-top: 0.25rem;
+}
