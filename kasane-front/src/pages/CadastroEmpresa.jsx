@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/css/auth.css';
 import '../assets/css/cadastro-empresa.css';
 import logo from '../assets/KasaneLogo.svg';
-import ArrowIcon from '../components/ArrowIcon';
 import api from '../api/client'
+import { ArrowRight, ArrowLeft, Building2, Eye, EyeOff } from 'lucide-react';
 
 function CadastroEmpresa() {
   const navigate = useNavigate();
@@ -46,8 +46,8 @@ function CadastroEmpresa() {
 
       <section className="auth-card">
         <div className="auth-card__back">
-          <button type="button" className="link-back" onClick={() => navigate('/')}>
-            <ArrowIcon />
+          <button type="button" className="link-back" onClick={() => navigate('/Home')}>
+            <ArrowLeft aria-hidden="true" />
             Voltar ao início
           </button>
         </div>
@@ -74,7 +74,7 @@ function CadastroEmpresa() {
                 required
               />
               <span className="input-wrapper__icon">
-                <BuildingIcon />
+                <Building2 strokeWidth={1.5} aria-hidden="true" />
               </span>
             </div>
           </div>
@@ -211,7 +211,7 @@ function CadastroEmpresa() {
                   onClick={() => setShowPassword((prev) => !prev)}
                   aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 >
-                  {showPassword ? <EyeIcon /> : <EyeOffIcon />}
+                  {showPassword ? <Eye strokeWidth={1.5} /> : <EyeOff strokeWidth={1.5} />}
                 </button>
               </div>
             </div>
@@ -235,62 +235,26 @@ function CadastroEmpresa() {
                   onClick={() => setShowConfirm((prev) => !prev)}
                   aria-label={showConfirm ? 'Ocultar senha' : 'Mostrar senha'}
                 >
-                  {showConfirm ? <EyeIcon /> : <EyeOffIcon />}
+                  {showConfirm ? <Eye strokeWidth={1.5} /> : <EyeOff strokeWidth={1.5} />}
                 </button>
               </div>
             </div>
           </div>
 
           <button type="submit" className="btn btn--primary btn--block register__submit">
-            <ArrowIcon />
+            <ArrowRight size={16} aria-hidden="true" />
             Cadastrar empresa
           </button>
         </form>
 
         <p className="auth-card__footer">
           Empresa já cadastrada?{' '}
-          <button type="button" className="link-inline" onClick={() => navigate('/login-empresa')}>
+          <button type="button" className="link-inline" onClick={() => navigate('/LoginEmpresa')}>
             Entrar
           </button>
         </p>
       </section>
     </main>
-  );
-}
-
-/* ---------- Ícones locais ---------- */
-
-function BuildingIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z" />
-      <path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2" />
-      <path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2" />
-      <path d="M10 6h4" />
-      <path d="M10 10h4" />
-      <path d="M10 14h4" />
-      <path d="M10 18h4" />
-    </svg>
-  );
-}
-
-function EyeIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function EyeOffIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M10.73 5.08A10.4 10.4 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.16 3.19" />
-      <path d="M6.61 6.61A17.5 17.5 0 0 0 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.39-1.61" />
-      <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
-      <path d="m2 2 20 20" />
-    </svg>
   );
 }
 

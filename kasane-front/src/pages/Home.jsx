@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import '../assets/css/Home.css';
 import KasaneLogo from '../assets/KasaneLogo.svg';
-import ArrowIcon from '../components/ArrowIcon';
-import { UsersRound, BuildingComplex } from "lucide-react"
+import { UsersRound, BuildingComplex, ArrowRight } from "lucide-react"
 
 function Home() {
   const navigate = useNavigate();
@@ -49,7 +48,7 @@ function Home() {
               {/* Card: funcionário */}
               <article className="access-card">
                 <div className="access-card__icon">
-                  <UsersRound size={100} />
+                  <UsersRound aria-hidden="true"/>
                 </div>
                 <p className="access-card__text">
                   Entre na sua comunidade e acompanhe o que acontece na empresa.
@@ -61,7 +60,7 @@ function Home() {
                     className="btn btn--primary btn--block"
                     onClick={() => navigate('/LoginFuncionario')}
                   >
-                    <ArrowIcon />
+                    <ArrowRight size={16} aria-hidden="true"/>
                     Entrar
                   </button>
                 </div>
@@ -70,7 +69,7 @@ function Home() {
               {/* Card: empresa */}
               <article className="access-card">
                 <div className="access-card__icon">
-                  <BuildingComplex />
+                  <BuildingComplex aria-hidden="true"/>
                 </div>
                 <p className="access-card__text">
                   Conecte sua equipe e organize a comunicação da sua empresa.
@@ -82,7 +81,7 @@ function Home() {
                     className="btn btn--primary btn--block"
                     onClick={() => navigate('/LoginEmpresa')}
                   >
-                    <ArrowIcon />
+                    <ArrowRight size={16} aria-hidden="true"/>
                     Entrar
                   </button>
                   <button

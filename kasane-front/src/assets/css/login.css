@@ -1,0 +1,30 @@
+/* ============================================
+   Página: Login da empresa
+   Apenas o que é específico desta tela
+   ============================================ */
+
+/* Etiqueta logo abaixo do "Voltar ao início" */
+.login__badge {
+  margin-bottom: 0.875rem;
+}
+
+/* Linha: "Manter conectado" à esquerda, "Esqueci minha senha" à direita */
+.login__options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.login__forgot {
+  font-size: 0.8125rem;
+}
+
+.login__submit {
+  margin-top: 0.25rem;
+}
+
+/* Link alternativo mais afastado do botão (sem o rodapé de cadastro) */
+.login__alt--spaced {
+  margin-top: 3.25rem;
+}

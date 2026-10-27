@@ -1,0 +1,477 @@
+/* ============================================
+   Área administrativa: layout compartilhado
+   Sidebar + topbar + conteúdo, e blocos reutilizáveis
+   ============================================ */
+
+.admin {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+/* ---------- Sidebar ---------- */
+
+.admin-sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 2rem 1.375rem 1.5rem;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+
+.admin-sidebar__logo {
+  width: 6rem;
+  margin-inline: auto;
+}
+
+.admin-sidebar__company {
+  margin-top: 1.75rem;
+  padding: 0.875rem 0.75rem;
+  border: 1px solid rgba(241, 241, 241, 0.3);
+  border-radius: 0.75rem;
+}
+
+.admin-sidebar__company-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.admin-sidebar__company-tagline {
+  margin-top: 0.125rem;
+  font-size: 0.6875rem;
+}
+
+.admin-sidebar__label {
+  margin-top: 1.875rem;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  margin-top: 0.75rem;
+}
+
+.admin-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  height: 2.875rem;
+  padding-inline: 1rem;
+  border: 1px solid rgba(241, 241, 241, 0.35);
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-light);
+  text-align: left;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.admin-nav__item svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.admin-nav__item:hover {
+  background-color: rgba(241, 241, 241, 0.12);
+}
+
+/* Item da página atual */
+.admin-nav__item[aria-current='page'] {
+  border-color: var(--color-light);
+  background-color: var(--color-light);
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.admin-sidebar__logout {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--color-light);
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.admin-sidebar__logout:hover {
+  opacity: 1;
+}
+
+/* ---------- Área principal e topbar ---------- */
+
+.admin-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: var(--color-beige);
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 5.5rem;
+  padding-inline: 2rem;
+  background-color: var(--color-light);
+}
+
+.admin-topbar__date {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.admin-topbar__user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-dark);
+}
+
+.admin-topbar__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background-color: var(--color-neutral);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.admin-topbar__info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.admin-topbar__name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.admin-topbar__role {
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--color-text-muted);
+}
+
+.admin-content {
+  flex: 1;
+  padding: 2rem 2rem 2.5rem;
+}
+
+/* ---------- Blocos reutilizáveis nas páginas admin ---------- */
+
+/* Título + subtítulo à esquerda, etiqueta à direita */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-header__title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.page-header__subtitle {
+  margin-top: 0.5rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.page-header .badge {
+  margin-top: 0.75rem;
+}
+
+/* Cards de estatística */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.3125rem;
+  border-radius: 1.5rem;
+  background-color: var(--color-light);
+}
+
+.stat-card__icon {
+  flex-shrink: 0;
+  color: var(--color-primary-dark);
+}
+
+.stat-card__icon svg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.stat-card__value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.stat-card__label {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* Painel (card branco) */
+.panel {
+  padding: 1.375rem;
+  border-radius: 1.5rem;
+  background-color: var(--color-light);
+}
+
+.panel__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* Campo de busca em pílula */
+.search {
+  position: relative;
+}
+
+.search__icon {
+  position: absolute;
+  top: 50%;
+  left: 0.875rem;
+  width: 1rem;
+  height: 1rem;
+  transform: translateY(-50%);
+  color: var(--color-primary-dark);
+  pointer-events: none;
+}
+
+.search__input {
+  width: 9.5rem;
+  height: 2.125rem;
+  padding: 0 1rem 0 2.5rem;
+  border: 1px solid var(--color-beige);
+  border-radius: 999px;
+  background-color: var(--color-white);
+  font-family: inherit;
+  font-size: 0.8125rem;
+  color: var(--color-dark);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search__input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
+}
+
+.search__input:focus {
+  outline: none;
+  border-color: var(--color-primary-dark);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+/* ---------- Grid tabela + formulário (5:3) ---------- */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 3fr);
+  align-items: start;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Cabeçalho do painel de listagem: título + busca */
+.panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* ---------- Tabela de dados ---------- */
+
+.data-table {
+  width: 100%;
+  margin-top: 1.5rem;
+  border-collapse: collapse;
+  table-layout: fixed;
+  text-align: left;
+}
+
+.data-table th {
+  padding-bottom: 1rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.data-table td {
+  padding-block: 1.0625rem;
+  border-top: 1px solid rgba(181, 162, 153, 0.6);
+  vertical-align: middle;
+}
+
+/* Larguras das colunas laterais (a primeira ocupa o restante) */
+.data-table__col-mid {
+  width: 9.5rem;
+}
+
+.data-table__col-end {
+  width: 3.875rem;
+}
+
+.data-table__name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.data-table__sub {
+  margin-top: 0.25rem;
+  font-size: 0.6875rem;
+  color: var(--color-text-muted);
+}
+
+.data-table__muted {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.data-table__value {
+  font-size: 0.875rem;
+}
+
+.panel__footer {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ---------- Formulário dentro do painel ---------- */
+
+.panel-form__title {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.panel-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+/* Linha com dois campos de mesma largura */
+.panel-form__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.panel-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* ---------- Ajustes para o layout do feed ---------- */
+
+/* Menu sem o rótulo "Administração": precisa de espaço próprio acima */
+.admin-nav--first {
+  margin-top: 1.875rem;
+}
+
+/* Usuário sempre alinhado à direita da topbar (com ou sem busca no meio) */
+.admin-topbar__user {
+  margin-left: auto;
+}
+
+/* Cabeçalho com item à direita centralizado na vertical (ex.: botão "Fazer post") */
+.page-header--center {
+  align-items: center;
+}
+
+/* Barra de busca escura da topbar */
+.topbar-search {
+  position: relative;
+  width: 100%;
+  max-width: 30rem;
+  margin-left: 2rem;
+}
+
+.topbar-search__icon {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  transform: translateY(-50%);
+  color: var(--color-light);
+  pointer-events: none;
+}
+
+.topbar-search__input {
+  width: 100%;
+  height: 2.625rem;
+  padding: 0 1.25rem 0 3rem;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--color-dark);
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--color-light);
+  transition: box-shadow 0.2s ease;
+}
+
+.topbar-search__input::placeholder {
+  color: var(--color-light);
+  opacity: 1;
+}
+
+.topbar-search__input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(111, 44, 51, 0.35);
+}
+
+/* Dica de atalho dentro da busca da topbar */
+.topbar-search__shortcut {
+  position: absolute;
+  top: 50%;
+  right: 1.25rem;
+  transform: translateY(-50%);
+  font-family: inherit;
+  font-size: 0.6875rem;
+  color: var(--color-neutral);
+  pointer-events: none;
+}
+
+/* Evita que o texto digitado passe por baixo do atalho */
+.topbar-search__input {
+  padding-right: 4.5rem;
+}
