@@ -12,19 +12,23 @@ class PublicacaoController extends Controller
      */
     public function index(Request $request)
     {
-        
         $funcionario = $request->user();
-        $query = $request->query('setor');
 
-        if($query == 'geral')
-        {
-            return Publicacao::where('setor_id', $funcionario->empresas->setor_geral)->get();
-        }
-        else
-        {
-            return Publicacao::where('setor_id', $funcionario->setor_id)->get();
-        }
-        
+        $setorId = $request->query('setor') === 'geral'
+            ? $funcionario->empresas->setor_geral 
+            : $funcionario->setor_id;
+
+        return Publicacao::query()
+            ->where('setor_id', $setorId)
+            ->when($request->query('busca'), fn ($q, $busca) =>
+                $q->where('titulo', 'ilike', "%{$busca}%")
+            )
+            ->withCount('comentarios as total_comentarios')
+            ->withExists(['salvos as salvo' => fn ($q) =>
+                $q->where('funcionario_id', $funcionario->funcionario_id)
+            ])
+            ->latest()
+            ->get();
     }
 
     /**
@@ -64,7 +68,12 @@ class PublicacaoController extends Controller
      */
     public function show(Publicacao $publicacao)
     {
-        return $publicacao;
+        return $publicacao
+            ->loadCount('comentarios as total_comentarios')
+            ->withExists(['salvos as salvo' => fn ($q) =>
+                $q->where('funcionario_id', $funcionario->funcionario_id)
+            ])
+            ->load(['comentarios' => fn ($q) => $q->orderBy('created_at')]);
     }
 
     /**
@@ -84,7 +93,7 @@ class PublicacaoController extends Controller
             'titulo'            => ['sometimes', 'string', 'max:255'],
             'texto'             => ['sometimes', 'string'],
             'funcionario_id'    => ['sometimes', 'integer', 'exists:funcionarios,funcionario_id'],
-            'setor_id'          => ['sometimes', 'integer', 'exists:setores,setor_id'],
+            'setor_id'          => ['sometimes', 'integer', 'exists:setors,setor_id'],
             'autor'             => ['sometimes', 'string', 'max:100'],
             'autor_foto'        => ['sometimes', 'string', 'max:300'],
             'autor_setor'       => ['sometimes', 'string', 'max:45'],

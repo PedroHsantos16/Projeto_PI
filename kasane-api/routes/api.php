@@ -30,6 +30,7 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'me']);
 
         Route::post('/registrar/funcionario', [AuthController::class, 'register_funcionario']);
         
@@ -41,12 +42,15 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
 
         Route::apiResource('publicacaos', PublicacaoController::class);
 
-        // Route::get('/vercomentarios', [ComentarioController::class, 'index']);    
+        // Route::get('/vercomentarios', [ComentarioController::class, 'index']);
+        Route::post('publicacaos/{publicacao}/comentarios', [ComentarioController::class, 'store']);    
         Route::apiResource('comentarios', ComentarioController::class);
 
         Route::apiResource('lembretes', LembreteController::class);
 
-        Route::apiResource('salvos', SalvoController::class);
+        Route::get('salvos', [SalvoController::class, 'index']);
+        Route::post('publicacaos/{publicacao}/salvar', [SalvoController::class, 'store']);
+        Route::delete('publicacaos/{publicacao}/salvar', [SalvoController::class, 'destroy']);
     });
 
     

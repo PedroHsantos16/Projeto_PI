@@ -25,6 +25,7 @@ function CadastroEmpresa() {
   // Visibilidade das senhas (não faz parte dos dados do formulário)
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [erro, setErro] = useState(null);
 
   // Atualiza apenas o campo que mudou, usando o "name" do input como chave
   function handleChange(event) {
@@ -34,7 +35,16 @@ function CadastroEmpresa() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    await api.post("/registrar/empresa", form)
+    try
+    {
+      await api.post("/registrar/empresa", form)
+    }
+    catch (err)
+    {
+
+    }
+
+
   }
 
   return (

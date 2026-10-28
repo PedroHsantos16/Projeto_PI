@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { X, ChevronDown, Send } from 'lucide-react';
 import '../assets/css/feed.css';
+import api from '../api/client';
+import { useAuth } from "../context/AuthContext";
 
 const estadoInicial = {
   titulo: '',
-  mensagem: '',
-  area_publicacao: 'todos',
+  texto: '',
+  setor_id: '',
 };
 
 /*
@@ -16,6 +18,7 @@ const estadoInicial = {
 */
 function CriarPublicacaoModal({ onClose, onSubmit }) {
   const [form, setForm] = useState(estadoInicial);
+  const { usuario, tipo } = useAuth();
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -24,9 +27,8 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    // TODO: enviar "form" para a API
-    console.log(form);
-    onSubmit?.(form);
+    //onSubmit?.(form);
+    api.post("/publicacaos", form);
     onClose();
   }
 
@@ -49,10 +51,10 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
 
         {/* Autor */}
         <div className="modal-author">
-          <span className="modal-author__avatar" aria-hidden="true">ML</span>
+          <span className="modal-author__avatar" aria-hidden="true">{usuario?.nome?.charAt(0)}</span>
           <div>
-            <p className="modal-author__name">Marina Lima</p>
-            <p className="modal-author__role">Recursos Humanos · Aurora Tecnologia</p>
+            <p className="modal-author__name">{usuario?.nome}</p>
+            <p className="modal-author__role">{usuario?.setors?.nome} · {usuario?.empresas?.razao_social}</p>
           </div>
         </div>
 
@@ -72,13 +74,13 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
           </div>
 
           <div className="form-field">
-            <label className="form-field__label" htmlFor="mensagem">Mensagem *</label>
+            <label className="form-field__label" htmlFor="texto">Mensagem *</label>
             <textarea
               className="input textarea"
-              id="mensagem"
-              name="mensagem"
+              id="texto"
+              name="texto"
               placeholder="Digite sua mensagem..."
-              value={form.mensagem}
+              value={form.texto}
               onChange={handleChange}
               required
             />
@@ -89,17 +91,14 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
             <div className="input-wrapper">
               <select
                 className="input input--icon select"
-                id="area_publicacao"
-                name="area_publicacao"
-                value={form.area_publicacao}
+                id="setor_id"
+                name="setor_id"
+                value={form.setor_id}
                 onChange={handleChange}
                 required
               >
-                <option value="todos">Todos os setores</option>
-                {/* TODO: listar os setores vindos da API */}
-                <option value="rh">Recursos Humanos</option>
-                <option value="tecnologia">Tecnologia</option>
-                <option value="comunicacao">Comunicação</option>
+                <option value={usuario?.empresas?.setor_geral}>Geral</option>
+                <option value={usuario?.setors?.setor_id}>{usuario?.setors?.nome}</option>
               </select>
               <span className="input-wrapper__icon">
                 <ChevronDown strokeWidth={1.5} aria-hidden="true" />

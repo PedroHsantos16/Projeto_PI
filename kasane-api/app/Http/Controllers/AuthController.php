@@ -98,7 +98,7 @@ class AuthController extends Controller
     $token = $funcionario->createToken($funcionario->nome . '-' . now()->timestamp)->plainTextToken;
 
     return response()->json([
-        'funcionario' => $funcionario,
+        'funcionario' => $funcionario->load(['empresas', 'setors', 'salvos']),
         'token'       => $token,
         'mensagem'    => 'Login realizado com sucesso.',
     ]);
@@ -120,7 +120,7 @@ public function login_empresa(Request $request)
     $token = $empresa->createToken($empresa->razao_social . '-' . now()->timestamp)->plainTextToken;
 
     return response()->json([
-        'empresa'  => $empresa,
+        'empresa'  => $empresa->load(['funcionarios', 'setors']),
         'token'    => $token,
         'mensagem' => 'Login realizado com sucesso.',
     ]);
@@ -130,5 +130,21 @@ public function login_empresa(Request $request)
     {
         $request->user()->currentAccessToken()->delete(); 
         return response()->json(['mensagem' => 'Logout realizado com sucesso.']);
+    }
+
+    public function me(Request $request) {
+        $usuario = $request->user();
+
+        if ($usuario instanceof Funcionario) {
+            return response()->json([
+                'tipo'    => 'funcionario',
+                'usuario' => $usuario->load(['empresas', 'setors', 'salvos']),
+            ]);
+        }
+
+        return response()->json([
+            'tipo'    => 'empresa',
+            'usuario' => $usuario->load(['funcionarios', 'setors']),
+        ]);
     }
 }

@@ -1,58 +1,59 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ArrowLeft, Send } from 'lucide-react';
+import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import FeedLayout from '../components/FeedLayout';
 import Post from '../components/Post';
 import '../assets/css/feed.css';
 
-/* Dados de exemplo: substitua pelos dados da API (ex.: useParams para buscar pelo id) */
-const postInicial = {
-  id: 1,
-  iniciais: 'CS',
-  autor: 'Camila Souza',
-  cargo: 'Coordenadora de RH · Recursos Humanos',
-  data: 'Hoje, 09:15',
-  titulo: 'Sua voz transforma a Aurora',
-  texto: [
-    'Nossa pesquisa de clima está aberta! Reserve 5 minutos para contar como tem sido sua experiência. As respostas são anônimas e nos ajudam a construir um lugar melhor para todos.',
-    'Você pode responder pelo formulário anexado até sexta-feira, 23/10, às 18h. Os resultados serão compartilhados com a equipe em novembro. Obrigada por construir essa conversa com a gente!',
-  ],
-  comentarios: 2,
-  salvo: true,
-};
-
-const comentariosIniciais = [
-  {
-    id: 1,
-    iniciais: 'ML',
-    autor: 'Marina Lima',
-    cargo: 'Analista de RH · Recursos Humanos',
-    data: 'Hoje, 09:32',
-    texto: 'Já respondi! Muito bom ter esse espaço para compartilhar o que podemos melhorar juntos.',
-  },
-  {
-    id: 2,
-    iniciais: 'RM',
-    autor: 'Rafael Mendes',
-    cargo: 'Analista de infraestrutura · Tecnologia',
-    data: 'Hoje, 10:05',
-    texto: 'Obrigado pelo lembrete, Camila. Vou compartilhar com o pessoal do time de TI.',
-  },
-];
-
 function DetalhePublicacao() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { id } = useParams();
+  const { usuario } = useAuth();
+
+   const {
+    origem = '/publicacoes',
+    active = 'geral',
+    rotulo = 'Geral',
+  } = location.state ?? {};
 
   const [busca, setBusca] = useState('');
-  const [post, setPost] = useState(postInicial);
-  const [comentarios, setComentarios] = useState(comentariosIniciais);
+  const [post, setPost] = useState(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
+  const [form, setForm] = useState({ comentario: '' });
+  const [enviando, setEnviando] = useState(false);
 
-  const [form, setForm] = useState({
-    comentario: '',
-  });
+  useEffect(() => {
+    api
+      .get(`/publicacaos/${id}`)
+      .then((res) => setPost(res.data))
+      .catch(() => setErro('Não foi possível carregar a publicação.'))
+      .finally(() => setCarregando(false));
+  }, [id]);
 
-  function toggleSalvo() {
-    setPost((prev) => ({ ...prev, salvo: !prev.salvo }));
+  const comentarios = post?.comentarios ?? [];
+
+  async function toggleSalvo(id) {
+    const post = posts.find((p) => p.publicacao_id === id);
+    const salvar = !post.salvo;
+
+    // atualiza a tela na hora
+    setPosts((prev) =>
+      prev.map((p) => (p.publicacao_id === id ? { ...p, salvo: salvar } : p))
+    );
+
+    try {
+      if (salvar) await api.post(`/publicacaos/${id}/salvar`);
+      else await api.delete(`/publicacaos/${id}/salvar`);
+    } catch {
+      // desfaz se der erro
+      setPosts((prev) =>
+        prev.map((p) => (p.publicacao_id === id ? { ...p, salvo: !salvar } : p))
+      );
+    }
   }
 
   function handleChange(event) {
@@ -60,85 +61,102 @@ function DetalhePublicacao() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    // TODO: enviar "form" para a API
-    console.log(form);
+    setEnviando(true);
+    try {
+      const { data: novo } = await api.post(`/publicacaos/${id}/comentarios`, {
+        texto: form.comentario,
+      });
+      setPost((prev) => ({
+        ...prev,
+        comentarios: [...prev.comentarios, novo],
+        total_comentarios: (prev.total_comentarios ?? 0) + 1,
+      }));
+      setForm({ comentario: '' });
+    } catch (err){
+      console.error(err.response?.status, err.response?.data);
+      alert('Não foi possível enviar o comentário.');
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
-    <FeedLayout active="geral" busca={busca} onBuscaChange={setBusca}>
-      {/* Trilha de navegação */}
-      <nav className="breadcrumb" aria-label="Trilha de navegação">
-        <button type="button" className="link-back" onClick={() => navigate('/Publicacoes')}>
+    <FeedLayout active={active} busca={busca} onBuscaChange={setBusca}>
+       <nav className="breadcrumb" aria-label="Trilha de navegação">
+        <button type="button" className="link-back" onClick={() => navigate(origem)}>
           <ArrowLeft aria-hidden="true" />
           Voltar ao feed
         </button>
         <span className="breadcrumb__sep" aria-hidden="true">/</span>
-        <span>Geral</span>
+        <span>{rotulo}</span>
         <span className="breadcrumb__sep" aria-hidden="true">/</span>
         <span aria-current="page">Publicação</span>
       </nav>
 
-      <div className="detail__grid">
-        <div className="detail__main">
-          {/* Publicação */}
-          <Post post={post} onSalvar={toggleSalvo} detalhe />
+      {carregando && <p>Carregando...</p>}
+      {erro && <p>{erro}</p>}
 
-          {/* Comentários */}
-          <section className="comments">
-            <h2 className="comments__title">Comentários ({comentarios.length})</h2>
+      {post && (
+        <div className="detail__grid">
+          <div className="detail__main">
+            <Post post={post} onSalvar={toggleSalvo} detalhe />
 
-            <ul className="comments__list">
-              {comentarios.map((comentario) => (
-                <li className="comment" key={comentario.id}>
-                  <span className="comment__avatar" aria-hidden="true">{comentario.iniciais}</span>
-                  <div>
-                    <p className="comment__name">{comentario.autor}</p>
-                    <p className="comment__role">{comentario.cargo}</p>
-                  </div>
-                  <time className="comment__date">{comentario.data}</time>
-                  <p className="comment__text">{comentario.texto}</p>
-                </li>
-              ))}
-            </ul>
+            <section className="comments">
+              <h2 className="comments__title">Comentários ({comentarios.length})</h2>
 
-            <form className="comment-form" onSubmit={handleSubmit}>
-              <label className="form-field__label" htmlFor="comentario">Seu comentário</label>
-              <div className="comment-form__row">
-                <input
-                  className="input"
-                  id="comentario"
-                  name="comentario"
-                  type="text"
-                  placeholder="Participe da conversa com respeito e gentileza..."
-                  value={form.comentario}
-                  onChange={handleChange}
-                  required
-                />
-                <button type="submit" className="btn btn--primary">
-                  <Send size={18} strokeWidth={1.5} aria-hidden="true" />
-                  Comentar
-                </button>
-              </div>
-              <p className="comment-form__note">
-                Comentando como Marina Lima · Recursos Humanos
-              </p>
-            </form>
-          </section>
+              <ul className="comments__list">
+                {comentarios.map((c) => (
+                  <li className="comment" key={c.comentario_id}>
+                    <span className="comment__avatar" aria-hidden="true">
+                      {c.autor?.charAt(0)}
+                    </span>
+                    <div>
+                      <p className="comment__name">{c.autor}</p>
+                      <p className="comment__role">{c.autor_cargo}</p>
+                    </div>
+                    <time className="comment__date">
+                      {new Date(c.created_at).toLocaleDateString('pt-BR')}
+                    </time>
+                    <p className="comment__text">{c.texto}</p>
+                  </li>
+                ))}
+              </ul>
+
+              <form className="comment-form" onSubmit={handleSubmit}>
+                <label className="form-field__label" htmlFor="comentario">Seu comentário</label>
+                <div className="comment-form__row">
+                  <input
+                    className="input"
+                    id="comentario"
+                    name="comentario"
+                    type="text"
+                    placeholder="Participe da conversa com respeito e gentileza..."
+                    value={form.comentario}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button type="submit" className="btn btn--primary" disabled={enviando}>
+                    <Send size={18} strokeWidth={1.5} aria-hidden="true" />
+                    Comentar
+                  </button>
+                </div>
+                <p className="comment-form__note">
+                  Comentando como {usuario?.nome} · {usuario?.setors?.nome}
+                </p>
+              </form>
+            </section>
+          </div>
+
+          <aside className="about">
+            <h2 className="about__title">Sobre esta publicação</h2>
+
+            <p className="about__label">Publicado por</p>
+            <span className="badge">{post.autor_setor}</span>
+          </aside>
         </div>
-
-        {/* Sobre esta publicação */}
-        <aside className="about">
-          <h2 className="about__title">Sobre esta publicação</h2>
-
-          <p className="about__label">Publicado por</p>
-          <span className="badge">Recursos Humanos</span>
-
-          <p className="about__label">Público</p>
-          <p className="about__value">Geral</p>
-        </aside>
-      </div>
+      )}
     </FeedLayout>
   );
 }

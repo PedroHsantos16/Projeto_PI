@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ArrowLeft, Mail, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from "../context/AuthContext";
 import '../assets/css/auth.css';
 import '../assets/css/login.css';
 import api from '../api/client'
@@ -8,6 +9,8 @@ import logo from '../assets/KasaneLogo.svg';
 
 function LoginEmpresa() {
   const navigate = useNavigate();
+  const { login_empresa } = useAuth();
+  const [erro, setErro] = useState(null);
 
   const [form, setForm] = useState({
     email: '',
@@ -28,7 +31,15 @@ function LoginEmpresa() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    
+    try
+    {
+      login_empresa(form.email, form.senha);
+    }
+    catch(err)
+    {
+        setErro("Credenciais inválidas");
+    }
+    navigate('/AdminSetor');
   }
 
   return (

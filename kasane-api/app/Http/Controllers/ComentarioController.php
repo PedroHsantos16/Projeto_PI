@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Comentario;
+use App\Models\Publicacao;
 use Illuminate\Http\Request;
 
 class ComentarioController extends Controller
@@ -39,28 +40,21 @@ class ComentarioController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Publicacao $publicacao)
     {
         $funcionario = $request->user();
 
-        $dados = request()->validate([
-            'texto'             => ['required', 'string'],
-            'publicacao_id'     => ['required', 'integer', 'exists:publicacaos,publicacao_id'],
-            //'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
-            //'autor'             => ['sometimes', 'string', 'max:100'],
-            //'autor_foto'        => ['sometimes', 'string', 'max:300'],
-            //'autor_setor'       => ['sometimes', 'string', 'max:45'],
-            //'autor_cargo'       => ['sometimes', 'string', 'max:45'],
+        $dados = $request->validate([
+            'texto' => ['required', 'string', 'max:1000'],
         ]);
 
-        $comentario = Comentario::create([
-            'texto'             => $dados['texto'],
-            'publicacao_id'     => $dados['publicacao_id'],
-            'funcionario_id'    => $funcionario->funcionario_id,
-            'autor'             => $funcionario->nome,
-            'autor_foto'        => $funcionario->foto ?? null,
-            'autor_setor'       => $funcionario->setors->nome,
-            'autor_cargo'       => $funcionario->cargo,
+        $comentario = $publicacao->comentarios()->create([
+            'texto'          => $dados['texto'],
+            'funcionario_id' => $funcionario->funcionario_id,
+            'autor'          => $funcionario->nome,
+            'autor_foto'     => $funcionario->foto ?? '',
+            'autor_setor'    => $funcionario->setors->nome,
+            'autor_cargo'    => $funcionario->cargo,
         ]);
 
         return response()->json($comentario, 201);

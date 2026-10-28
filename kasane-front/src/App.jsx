@@ -11,24 +11,41 @@ import Salvos from './pages/Salvos';
 import DetalhePublicacao from './pages/DetalhePublicacao';
 import AdminFunc from './pages/AdminFunc';
 import AdminSetor from './pages/AdminSetor';
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import RotaPrivada from "./components/RotaPrivada";
 
 function App() {
 
   return (
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<Navigate to="/Home" replace />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/LoginEmpresa" element={<LoginEmpresa />} />
         <Route path="/LoginFuncionario" element={<LoginFuncionario />} />
         <Route path="/CadastroEmpresa" element={<CadastroEmpresa />} />
-        <Route path="/Publicacoes" element={<Publicacoes />} />
+        <Route path="/Publicacoes" 
+               element={
+               <RotaPrivada>
+                <Publicacoes />
+              </RotaPrivada>
+            } 
+        />
         <Route path="/MeuSetor" element={<MeuSetor />} />
         <Route path="/Salvos" element={<Salvos />} />
-        <Route path="/DetalhePublicacao" element={<DetalhePublicacao />} />
+        <Route
+          path="/publicacoes/:id"
+          element={
+            <RotaPrivada>
+              <DetalhePublicacao />
+            </RotaPrivada>
+          }
+        />
         <Route path="/AdminFunc" element={<AdminFunc />} />
         <Route path="/AdminSetor" element={<AdminSetor />} />
         <Route path="/HomeAntigo" element={<HomeAntigo />} />
       </Routes>
+    </AuthProvider> 
   );
 }
 

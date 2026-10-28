@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, Bookmark, LogOut, ChevronDown, Search } from 'lucide-react';
 import '../assets/css/admin.css';
 import logo from '../assets/KasaneLogo.svg';
+import { useAuth } from "../context/AuthContext";
 
 /*
   Estrutura compartilhada das telas do usuário comum (feed, meu setor, salvos).
@@ -11,6 +12,18 @@ import logo from '../assets/KasaneLogo.svg';
 */
 function FeedLayout({ active, busca = '', onBuscaChange, children }) {
   const navigate = useNavigate();
+  const { usuario, tipo } = useAuth();
+  const { logout } = useAuth();
+
+  const nomeEmpresa =
+    tipo === "empresa"
+      ? usuario?.razao_social
+      : usuario?.empresas?.razao_social;
+
+  function deslogar(){
+    logout();
+    navigate("/Home");
+  }
 
   return (
     <div className="admin">
@@ -19,7 +32,7 @@ function FeedLayout({ active, busca = '', onBuscaChange, children }) {
         <img className="admin-sidebar__logo" src={logo} alt="Kasane" />
 
         <div className="admin-sidebar__company">
-          <p className="admin-sidebar__company-name">Empresa X</p>
+          <p className="admin-sidebar__company-name">{nomeEmpresa}</p>
           <p className="admin-sidebar__company-tagline">Nossa rede de conexões</p>
         </div>
 
@@ -55,7 +68,7 @@ function FeedLayout({ active, busca = '', onBuscaChange, children }) {
           </button>
         </nav>
 
-        <button type="button" className="admin-sidebar__logout" onClick={() => navigate('/Home')}>
+        <button type="button" className="admin-sidebar__logout" onClick={() => deslogar()}>
           <LogOut size={20} strokeWidth={1.5} aria-hidden="true" />
           Sair da conta
         </button>
@@ -79,10 +92,10 @@ function FeedLayout({ active, busca = '', onBuscaChange, children }) {
           </div>
 
           <button type="button" className="admin-topbar__user">
-            <span className="admin-topbar__avatar" aria-hidden="true">ML</span>
+            <span className="admin-topbar__avatar" aria-hidden="true">{usuario?.nome?.charAt(0)}</span>
             <span className="admin-topbar__info">
-              <span className="admin-topbar__name">Marina Lima</span>
-              <span className="admin-topbar__role">Recursos Humanos</span>
+              <span className="admin-topbar__name">{usuario?.nome}</span>
+              <span className="admin-topbar__role">{usuario?.setors?.nome}</span>
             </span>
             <ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>

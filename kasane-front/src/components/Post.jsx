@@ -4,7 +4,7 @@ import '../assets/css/feed.css';
 /*
   Card de uma publicação.
   Props:
-    post          -> { id, iniciais, autor, cargo, data, titulo, texto, comentarios, salvo }
+    post          -> { post_id, autor_foto, autor, autor_cargo, created_at, titulo, texto, comentarios}
                      "texto" pode ser string ou array de parágrafos
     onSalvar      -> função chamada com o id do post ao clicar em "Salvar/Salvo"
     onComentarios (opcional) -> função chamada com o id ao clicar em "comentários"
@@ -17,6 +17,11 @@ function Post({ post, onSalvar, onComentarios, onAutorClick, removivel = false, 
   const Titulo = detalhe ? 'h1' : 'h2';
   const paragrafos = Array.isArray(post.texto) ? post.texto : [post.texto];
 
+  const total = post.total_comentarios ?? post.quantidade_comentarios ?? 0;
+  const data = post.created_at
+    ? new Date(post.created_at).toLocaleDateString('pt-BR')
+    : '';
+
   return (
     <article className="post">
       <header className="post__header">
@@ -26,13 +31,13 @@ function Post({ post, onSalvar, onComentarios, onAutorClick, removivel = false, 
           onClick={() => onAutorClick?.(post)}
           aria-label={`Ver perfil de ${post.autor}`}
         >
-          <span className="post__avatar" aria-hidden="true">{post.iniciais}</span>
+          <span className="post__avatar" aria-hidden="true">{post.autor?.charAt(0)}</span>
           <div className="post__author">
             <p className="post__name">{post.autor}</p>
-            <p className="post__role">{post.cargo}</p>
+            <p className="post__role">{post.autor_cargo}</p>
           </div>
         </button>
-        <time className="post__date">{post.data}</time>
+        <time className="post__date">{data}</time>
       </header>
 
       <Titulo className="post__title">{post.titulo}</Titulo>
@@ -44,16 +49,16 @@ function Post({ post, onSalvar, onComentarios, onAutorClick, removivel = false, 
         <button
           type="button"
           className="post__comments"
-          onClick={() => onComentarios?.(post.id)}
+          onClick={() => onComentarios?.(post.publicacao_id)}
         >
           <MessageCircle strokeWidth={1.5} aria-hidden="true" />
-          {post.comentarios} comentários
+          {total} comentários
         </button>
 
         <button
           type="button"
           className="post__save"
-          onClick={() => onSalvar?.(post.id)}
+          onClick={() => onSalvar?.(post.publicacao_id)}
           aria-pressed={marcado}
         >
           {marcado ? (
