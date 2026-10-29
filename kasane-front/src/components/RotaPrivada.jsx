@@ -1,13 +1,16 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
-function RotaPrivada({ children }) {
-  const { usuario, carregando } = useAuth();
+function RotaPrivada({ children, perm }) {
+  const { usuario, carregando, tipo } = useAuth();
 
   if (carregando) return <p>Carregando...</p>;
-  if (!usuario) return <Navigate to="/Home" replace />;
+  
+  if (usuario && tipo === perm) {
+    return children;
+  }
 
-  return children;
+  return <Navigate to="/Home" replace />;
 }
 
 export default RotaPrivada;

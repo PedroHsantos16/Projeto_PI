@@ -12,39 +12,43 @@ import DetalhePublicacao from './pages/DetalhePublicacao';
 import AdminFunc from './pages/AdminFunc';
 import AdminSetor from './pages/AdminSetor';
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { LembretesProvider } from './context/LembreteContext';
 import RotaPrivada from "./components/RotaPrivada";
 
 function App() {
 
   return (
     <AuthProvider>
-      <Routes>
-        <Route path="/" element={<Navigate to="/Home" replace />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/LoginEmpresa" element={<LoginEmpresa />} />
-        <Route path="/LoginFuncionario" element={<LoginFuncionario />} />
-        <Route path="/CadastroEmpresa" element={<CadastroEmpresa />} />
-        <Route path="/Publicacoes" 
-               element={
-               <RotaPrivada>
-                <Publicacoes />
+      <LembretesProvider>
+        <Routes>
+          
+          <Route path="/" element={<Navigate to="/Home" replace />} />
+          <Route path="/Home" element={<Home />} />
+          <Route path="/LoginEmpresa" element={<LoginEmpresa />} />
+          <Route path="/LoginFuncionario" element={<LoginFuncionario />} />
+          <Route path="/CadastroEmpresa" element={<CadastroEmpresa />} />
+          <Route path="/Publicacoes" 
+                element={
+                <RotaPrivada perm="funcionario">
+                  <Publicacoes />
+                </RotaPrivada>
+              } 
+          />
+          <Route path="/MeuSetor" element={<RotaPrivada perm="funcionario"><MeuSetor /></RotaPrivada>} />
+          <Route path="/Salvos" element={<RotaPrivada perm="funcionario"><Salvos /></RotaPrivada>} />
+          <Route
+            path="/publicacoes/:id"
+            element={
+              <RotaPrivada perm="funcionario">
+                <DetalhePublicacao />
               </RotaPrivada>
-            } 
-        />
-        <Route path="/MeuSetor" element={<MeuSetor />} />
-        <Route path="/Salvos" element={<Salvos />} />
-        <Route
-          path="/publicacoes/:id"
-          element={
-            <RotaPrivada>
-              <DetalhePublicacao />
-            </RotaPrivada>
-          }
-        />
-        <Route path="/AdminFunc" element={<AdminFunc />} />
-        <Route path="/AdminSetor" element={<AdminSetor />} />
-        <Route path="/HomeAntigo" element={<HomeAntigo />} />
-      </Routes>
+            }
+          />
+          <Route path="/AdminFunc" element={<RotaPrivada perm="empresa"><AdminFunc /></RotaPrivada>} />
+          <Route path="/AdminSetor" element={<RotaPrivada perm="empresa"><AdminSetor /></RotaPrivada>} />
+          <Route path="/HomeAntigo" element={<HomeAntigo />} />
+        </Routes>
+      </LembretesProvider>
     </AuthProvider> 
   );
 }

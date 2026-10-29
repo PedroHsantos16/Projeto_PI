@@ -31,9 +31,7 @@ Route::prefix('v1')->middleware('throttle:60,1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
-
-        Route::post('/registrar/funcionario', [AuthController::class, 'register_funcionario']);
-        
+ 
         Route::apiResource('empresas', EmpresaController::class);
 
         Route::apiResource('setors', SetorController::class);
