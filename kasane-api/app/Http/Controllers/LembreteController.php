@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Lembrete;
+use App\Models\Funcionario;
 use Illuminate\Http\Request;
 
 class LembreteController extends Controller
@@ -12,17 +13,13 @@ class LembreteController extends Controller
      */
     public function index(Request $request)
     {
-        /*
-            $query = Lembrete::query();
-            $funcionario_id = $request->query('funcionario_id');
-            $query->where('funcionario_id', $funcionario_id);
-            $query->where('concluido', false);
-
-            return $query->get();
-        */
-        
         $funcionario = $request->user();
-        return Lembrete::where('funcionario_id', $funcionario->funcionario_id)->where('concluido', false)->get();
+        abort_unless($funcionario instanceof Funcionario, 403);
+
+        return Lembrete::where('funcionario_id', $funcionario->funcionario_id)
+            ->where('concluido', false)
+            ->orderBy('horario')
+            ->get();
     }
 
     /**
@@ -39,23 +36,20 @@ class LembreteController extends Controller
     public function store(Request $request)
     {
         $funcionario = $request->user();
+        abort_unless($funcionario instanceof Funcionario, 403);
 
         $dados = $request->validate([
-            'titulo'            => ['required', 'string', 'max:45'],
-            'descricao'         => ['required', 'string'],
-            'horario'           => ['sometimes', 'date'],
-            'concluido'         => ['sometimes', 'boolean'],
-            //'funcionario_id'    => ['required', 'integer', 'exists:funcionarios,funcionario_id'],
+            'titulo'    => ['required', 'string', 'max:255'],
+            'descricao' => ['nullable', 'string'],
+            'horario'   => ['required', 'date'],
         ]);
 
         $lembrete = Lembrete::create([
-            'titulo'            => $dados['titulo'],
-            'descricao'         => $dados['descricao'],
-            'horario'           => $dados['horario'] ?? null,
-            'concluido'         => $dados['concluido'] ?? false,
-            'funcionario_id'    => $funcionario->funcionario_id,
+            ...$dados,
+            'funcionario_id' => $funcionario->funcionario_id,
+            'concluido'      => false,
         ]);
-        
+
         return response()->json($lembrete, 201);
     }
 
@@ -80,12 +74,13 @@ class LembreteController extends Controller
      */
     public function update(Request $request, Lembrete $lembrete)
     {
+        abort_unless($lembrete->funcionario_id === $request->user()->funcionario_id, 403);
+
         $dados = $request->validate([
-            'titulo'            => ['sometimes', 'string', 'max:45'],
-            'descricao'         => ['sometimes', 'string'],
-            'horario'           => ['sometimes', 'date'],
-            'concluido'         => ['sometimes', 'boolean'],
-            'funcionario_id'    => ['sometimes', 'integer', 'exists:funcionarios,funcionario_id'],
+            'concluido' => ['sometimes', 'boolean'],
+            'titulo'    => ['sometimes', 'string', 'max:255'],
+            'descricao' => ['sometimes', 'nullable', 'string'],
+            'horario'   => ['sometimes', 'date'],
         ]);
 
         $lembrete->update($dados);
@@ -97,6 +92,8 @@ class LembreteController extends Controller
      */
     public function destroy(Lembrete $lembrete)
     {
+        abort_unless($lembrete->funcionario_id === $request->user()->funcionario_id, 403);
+
         $lembrete->delete();
         return response()->json(null, 204);
     }

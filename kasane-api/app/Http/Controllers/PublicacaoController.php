@@ -68,12 +68,14 @@ class PublicacaoController extends Controller
      */
     public function show(Publicacao $publicacao)
     {
-        return $publicacao
-            ->loadCount('comentarios as total_comentarios')
-            ->withExists(['salvos as salvo' => fn ($q) =>
-                $q->where('funcionario_id', $funcionario->funcionario_id)
-            ])
-            ->load(['comentarios' => fn ($q) => $q->orderBy('created_at')]);
+        $publicacao->loadCount('comentarios as total_comentarios');
+        $publicacao->load(['comentarios' => fn ($q) => $q->orderBy('created_at')]);
+
+        $publicacao->salvo = $publicacao->salvos()
+            ->where('funcionario_id', $publicacao->funcionario_id)
+            ->exists();
+
+        return $publicacao;
     }
 
     /**

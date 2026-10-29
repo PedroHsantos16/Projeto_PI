@@ -2,17 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Empresa;
 use App\Models\Funcionario;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class FuncionarioController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return Funcionario::all();
+        $empresa = $request->user();
+        abort_unless($empresa instanceof Empresa, 403);
+
+        return Funcionario::where('empresa_id', $empresa->empresa_id)
+            ->with('setors')
+            ->when($request->query('busca'), fn ($q, $busca) =>
+                $q->where(fn ($w) => $w
+                    ->where('nome', 'ilike', "%{$busca}%")
+                    ->orWhere('cargo', 'ilike', "%{$busca}%"))
+            )
+            ->orderByDesc('funcionario_id')
+            ->get();
+    }
+
+        public function store(Request $request)
+    {
+        $empresa = $request->user();
+        abort_unless($empresa instanceof Empresa, 403);
+
+        $dados = $request->validate([
+            'nome'      => ['required', 'string', 'max:100'],
+            'email'     => ['required', 'email', 'unique:funcionarios,email'],
+            'cpf'       => ['required', 'string', 'max:14', 'unique:funcionarios,cpf'],
+            'cargo'     => ['required', 'string', 'max:45'],
+            'ramal'     => ['required', 'string', 'max:10'],
+            'telefone'  => ['required', 'string', 'max:20'],
+            'tipo_conta'=> ['required', Rule::in(['admin', 'comum'])],
+            'setor_id'  => [
+                'required', 'integer',
+                Rule::exists('setors', 'setor_id')->where('empresa_id', $empresa->empresa_id),
+            ],
+            'senha'          => ['required', 'string', 'min:8']
+        ]);
+
+        $senhaTemporaria = "123456789";
+
+        $funcionario = Funcionario::create([
+            ...$dados,
+            'empresa_id' => $empresa->empresa_id,
+            'senha_hash' => Hash::make($dados['senha']),
+        ]);
+
+        return response()->json([
+            'funcionario'      => $funcionario->load('setors'),
+        ], 201);
     }
 
     /**
@@ -20,7 +65,7 @@ class FuncionarioController extends Controller
      */
     public function show(Funcionario $funcionario)
     {
-        return $funcionario;
+        return $funcionario->load(['setors','empresas']);
     }
 
     /**

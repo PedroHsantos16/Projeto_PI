@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Empresa;
 use App\Models\Setor;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SetorController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         $empresa = $request->user();
-        return Setor::where('empresa_id', $empresa->empresa_id)->get();
+        abort_unless($empresa instanceof Empresa, 403);
+
+        return Setor::where('empresa_id', $empresa->empresa_id)
+            ->orderBy('nome')
+            ->get();
     }
 
     /**
@@ -22,24 +25,20 @@ class SetorController extends Controller
     public function store(Request $request)
     {
         $empresa = $request->user();
-
-        if (! $empresa instanceof Empresa) {
-            return response()->json(['erro' => 'Apenas empresas podem cadastrar funcionários.'], 403);
-        }
+        abort_unless($empresa instanceof Empresa, 403);
 
         $dados = $request->validate([
-            'nome'                      => ['required', 'string', 'max:100'],
-            //'empresa_id'                => ['required', 'integer', 'exists:empresas,empresa_id'],
-            //'quantidade_funcionarios'   => ['sometimes', 'integer'],
-            //'responsavel'               => ['sometimes', 'string', 'max:100'],
+            'nome' => [
+                'required', 'string', 'max:45',
+                Rule::unique('setors', 'nome')->where('empresa_id', $empresa->empresa_id),
+            ],
         ]);
 
         $setor = Setor::create([
-            'nome'                      => $dados['nome'],
-            'empresa_id'                => $empresa->empresa_id,
-            //'responsavel'               => $dados['responsavel'],
-        ]
-        );
+            ...$dados,
+            'empresa_id' => $empresa->empresa_id,
+        ]);
+
         return response()->json($setor, 201);
     }
 
