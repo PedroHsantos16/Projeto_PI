@@ -29,17 +29,18 @@ function LoginEmpresa() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     try
     {
-      login_empresa(form.email, form.senha);
+      await login_empresa(form.email, form.senha);
+      navigate('/AdminSetor');
     }
     catch(err)
     {
-        setErro("Credenciais inválidas");
+      setErro("Credenciais inválidas");
     }
-    navigate('/AdminSetor');
+    
   }
 
   return (
@@ -112,7 +113,7 @@ function LoginEmpresa() {
             </div>
           </div>
 
-          <button type="submit" className="btn btn--primary btn--block login__submit" onClick={() => navigate('/AdminSetor')}>
+          <button type="submit" className="btn btn--primary btn--block login__submit" onClick={() => handleSubmit()}>
             <ArrowRight size={16} aria-hidden="true" />
             Entrar como administrador
           </button>

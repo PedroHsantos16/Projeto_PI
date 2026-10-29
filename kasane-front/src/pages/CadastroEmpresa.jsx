@@ -38,6 +38,7 @@ function CadastroEmpresa() {
     try
     {
       await api.post("/registrar/empresa", form)
+      navigate('/LoginEmpresa');
     }
     catch (err)
     {

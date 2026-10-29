@@ -28,17 +28,17 @@ function LoginFuncionario() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     try
     {
-      login_funcionario(form.email, form.senha);
+      await login_funcionario(form.email, form.senha);
+      navigate('/Publicacoes');
     }
     catch(err)
     {
-        setErro("Credenciais inválidas");
+      setErro("Credenciais inválidas");
     }
-    navigate('/Publicacoes');
   }
 
   return (
