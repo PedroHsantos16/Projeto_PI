@@ -35,18 +35,16 @@ function Salvos() {
     return () => clearTimeout(timer);
   }, [busca]);
 
-  function abrirPerfil(post) {
-    // TODO: buscar o perfil real do autor na API
-    setPerfil({
-      iniciais: post.autor?.charAt(0),
-      nome: post.autor,
-      cargo: post.autor_cargo,
-      setor: post.autor_setor,
-      empresa: '',
-      email: '',
-      ramal: '',
-      desde: '',
-    });
+  async function abrirPerfil(post) {
+    try
+    {
+      await api.get(`/funcionarios/${post.funcionario_id}`)
+               .then((res) => setPerfil(res.data))
+    }
+    catch(err)
+    {
+      alert("Não foi possivel abrir o perfil")
+    }
   }
 
   // Remove da lista na hora e avisa a API; se falhar, recarrega

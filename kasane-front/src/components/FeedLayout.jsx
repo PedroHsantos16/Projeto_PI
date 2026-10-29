@@ -25,6 +25,24 @@ function FeedLayout({ active, busca = '', onBuscaChange, children }) {
     navigate("/Home");
   }
 
+  function formatarDataAtual() {
+    const agora = new Date();
+
+    const diaSemana = agora
+      .toLocaleDateString('pt-BR', { weekday: 'long' })
+      .split('-')[0];                       
+
+    const dia = agora.getDate();
+    const mes = agora
+      .toLocaleDateString('pt-BR', { month: 'short' })
+      .replace('.', '');                    
+    const ano = agora.getFullYear();
+
+    const capitalizado = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1);
+
+    return `${capitalizado}, ${dia} ${mes} ${ano}`;
+  }
+
   return (
     <div className="admin">
       {/* ---------- Sidebar ---------- */}
@@ -77,7 +95,7 @@ function FeedLayout({ active, busca = '', onBuscaChange, children }) {
       {/* ---------- Área principal ---------- */}
       <div className="admin-main">
         <header className="admin-topbar">
-          <p className="admin-topbar__date">Quarta, 21 out 2026</p>
+          <p className="admin-topbar__date">{formatarDataAtual()}</p>
 
           <div className="topbar-search">
             <Search className="topbar-search__icon" strokeWidth={1.5} aria-hidden="true" />
@@ -97,7 +115,6 @@ function FeedLayout({ active, busca = '', onBuscaChange, children }) {
               <span className="admin-topbar__name">{usuario?.nome}</span>
               <span className="admin-topbar__role">{usuario?.setors?.nome}</span>
             </span>
-            <ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>
         </header>
 

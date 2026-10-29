@@ -36,10 +36,17 @@ function Publicacoes() {
 
 
  
-  function abrirPerfil(post) {
-  // TODO: buscar o perfil real do autor na API
-  
-}
+  async function abrirPerfil(post) {
+    try
+    {
+      await api.get(`/funcionarios/${post.funcionario_id}`)
+               .then((res) => setPerfil(res.data))
+    }
+    catch(err)
+    {
+      alert("Não foi possivel abrir o perfil")
+    }
+  }
 
   // Alterna entre "Salvar" e "Salvo" no post clicado
   async function toggleSalvo(id) {
@@ -88,7 +95,7 @@ function Publicacoes() {
                 navigate(`/publicacoes/${id}`, {
                   state: { origem: '/publicacoes', active: 'geral', rotulo: 'Geral' },
                 })
-}
+              }
               onAutorClick={abrirPerfil}
             />
           ))}
