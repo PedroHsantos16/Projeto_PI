@@ -26,10 +26,10 @@ function PerfilFuncionarioModal({ perfil, onClose }) {
 
         {/* Identificação */}
         <div className="profile__hero">
-          <span className="profile__avatar" aria-hidden="true">{perfil.iniciais}</span>
+          <span className="profile__avatar" aria-hidden="true">{perfil.nome?.charAt(0)}</span>
           <h3 className="profile__name">{perfil.nome}</h3>
-          <p className="profile__role">{perfil.cargo}</p>
-          <span className="badge">{perfil.setor}</span>
+          <p className="profile__role">{perfil.setors?.cargo}</p>
+          <span className="badge">{perfil.setors?.nome}</span>
         </div>
 
         {/* Informações */}
@@ -38,7 +38,7 @@ function PerfilFuncionarioModal({ perfil, onClose }) {
             <Building2 strokeWidth={1.5} aria-hidden="true" />
             <div>
               <p className="profile__label">Empresa</p>
-              <p className="profile__value">{perfil.empresa}</p>
+              <p className="profile__value">{perfil.empresas?.razao_social}</p>
             </div>
           </div>
 
@@ -59,13 +59,6 @@ function PerfilFuncionarioModal({ perfil, onClose }) {
               </div>
             </div>
 
-            <div className="profile__item">
-              <CalendarDays strokeWidth={1.5} aria-hidden="true" />
-              <div>
-                <p className="profile__label">Na Aurora desde</p>
-                <p className="profile__value">{perfil.desde}</p>
-              </div>
-            </div>
           </div>
         </div>
 

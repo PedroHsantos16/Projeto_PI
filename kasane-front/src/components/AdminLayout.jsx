@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Network, User, LogOut, ChevronDown } from 'lucide-react';
 import '../assets/css/admin.css';
 import logo from '../assets/KasaneLogo.svg';
+import { useAuth } from "../context/AuthContext";
 
 /*
   Estrutura compartilhada das telas administrativas.
@@ -10,6 +11,31 @@ import logo from '../assets/KasaneLogo.svg';
 */
 function AdminLayout({ active, children }) {
   const navigate = useNavigate();
+  const { usuario, tipo } = useAuth();
+  const { logout } = useAuth();
+
+  function formatarDataAtual() {
+    const agora = new Date();
+
+    const diaSemana = agora
+      .toLocaleDateString('pt-BR', { weekday: 'long' })
+      .split('-')[0];                       
+
+    const dia = agora.getDate();
+    const mes = agora
+      .toLocaleDateString('pt-BR', { month: 'short' })
+      .replace('.', '');                    
+    const ano = agora.getFullYear();
+
+    const capitalizado = diaSemana.charAt(0).toUpperCase() + diaSemana.slice(1);
+
+    return `${capitalizado}, ${dia} ${mes} ${ano}`;
+  }
+
+  function deslogar(){
+    logout();
+    navigate("/Home");
+  }
 
   return (
     <div className="admin">
@@ -18,7 +44,7 @@ function AdminLayout({ active, children }) {
         <img className="admin-sidebar__logo" src={logo} alt="Kasane" />
 
         <div className="admin-sidebar__company">
-          <p className="admin-sidebar__company-name">Empresa X</p>
+          <p className="admin-sidebar__company-name">{usuario?.razao_social}</p>
           <p className="admin-sidebar__company-tagline">Nossa rede de conexões</p>
         </div>
 
@@ -46,7 +72,7 @@ function AdminLayout({ active, children }) {
           </button>
         </nav>
 
-        <button type="button" className="admin-sidebar__logout" onClick={() => navigate('/Home')}>
+        <button type="button" className="admin-sidebar__logout" onClick={() => deslogar()}>
           <LogOut size={20} strokeWidth={1.5} aria-hidden="true" />
           Sair da conta
         </button>
@@ -55,15 +81,14 @@ function AdminLayout({ active, children }) {
       {/* ---------- Área principal ---------- */}
       <div className="admin-main">
         <header className="admin-topbar">
-          <p className="admin-topbar__date">Quarta, 21 out 2026</p>
+          <p className="admin-topbar__date">{formatarDataAtual()}</p>
 
           <button type="button" className="admin-topbar__user">
             <span className="admin-topbar__avatar" aria-hidden="true">X</span>
             <span className="admin-topbar__info">
-              <span className="admin-topbar__name">Empresa X</span>
+              <span className="admin-topbar__name">{usuario?.razao_social}</span>
               <span className="admin-topbar__role">Conta administrativa</span>
             </span>
-            <ChevronDown size={18} strokeWidth={1.5} aria-hidden="true" />
           </button>
         </header>
 

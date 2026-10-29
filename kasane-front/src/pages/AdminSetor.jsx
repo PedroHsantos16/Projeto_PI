@@ -1,19 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Network, Users, Search, ChevronDown, Plus } from 'lucide-react';
+import api from '../api/client';
+import { useAuth } from '../context/AuthContext';
 import AdminLayout from '../components/AdminLayout';
 import '../assets/css/admin-setor.css';
 
-/* Dados de exemplo para montar o visual: substitua pelos dados da API */
+const estadoInicial = { nome: '', responsavel_id: '' };
 
+function primeiroErro(err) {
+  const erros = err.response?.data?.errors;
+  if (erros) return Object.values(erros)[0][0];
+  return err.response?.data?.message ?? 'Não foi possível concluir a operação.';
+}
 
 function AdminSetor() {
+  const { usuario } = useAuth();
+
   const [busca, setBusca] = useState('');
   const [setores, setSetores] = useState([]);
+  const [funcionarios, setFuncionarios] = useState([]);
+  const [form, setForm] = useState(estadoInicial);
+  const [carregando, setCarregando] = useState(true);
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState(null);
 
-  const [form, setForm] = useState({
-    nome: '',
-    responsavel: '',
-  });
+  function carregarSetores() {
+    return api
+      .get('/setors')
+      .then((res) => setSetores(res.data))
+      .catch(() => setErro('Não foi possível carregar os setores.'))
+      .finally(() => setCarregando(false));
+  }
+
+  function carregarFuncionarios() {
+    return api.get('/funcionarios').then((res) => setFuncionarios(res.data));
+  }
+
+  useEffect(() => {
+    carregarSetores();
+    carregarFuncionarios();
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -21,23 +47,37 @@ function AdminSetor() {
   }
 
   function handleCancel() {
-    setForm({ nome: '', descricao: '', responsavel: '' });
+    setForm(estadoInicial);
+    setErro(null);
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    // TODO: enviar "form" para a API
-    console.log(form);
+    setEnviando(true);
+    setErro(null);
+    try {
+      await api.post('/setors', form);
+      setForm(estadoInicial);
+      await carregarSetores(); // atualiza a lista
+    } catch (err) {
+      console.error(err.response?.status, err.response?.data);
+      setErro(primeiroErro(err));
+    } finally {
+      setEnviando(false);
+    }
   }
 
-  async function verSetores()
-  {
-    await api.get("/setors")
-  }
+  const setoresFiltrados = setores.filter((s) =>
+    s.nome.toLowerCase().includes(busca.toLowerCase())
+  );
+
+  const totalPessoas = setores.reduce(
+    (soma, s) => soma + (s.quantidade_funcionarios ?? 0),
+    0
+  );
 
   return (
     <AdminLayout active="setores">
-      {/* Cabeçalho */}
       <div className="page-header">
         <div>
           <h1 className="page-header__title">Setores da empresa</h1>
@@ -48,15 +88,16 @@ function AdminSetor() {
         <span className="badge">Acesso de administrador</span>
       </div>
 
-      {/* Estatísticas */}
       <div className="stats">
         <article className="stat-card">
           <div className="stat-card__icon">
             <Network strokeWidth={1.5} aria-hidden="true" />
           </div>
           <div>
-            <p className="stat-card__value">6</p>
-            <p className="stat-card__label">setores cadastrados</p>
+            <p className="stat-card__value">{setores.length}</p>
+            <p className="stat-card__label">
+              {setores.length === 1 ? 'setor cadastrado' : 'setores cadastrados'}
+            </p>
           </div>
         </article>
 
@@ -65,14 +106,13 @@ function AdminSetor() {
             <Users strokeWidth={1.5} aria-hidden="true" />
           </div>
           <div>
-            <p className="stat-card__value">64</p>
+            <p className="stat-card__value">{totalPessoas}</p>
             <p className="stat-card__label">pessoas na organização</p>
           </div>
         </article>
       </div>
 
       <div className="setores__grid">
-        {/* Lista de setores */}
         <section className="panel">
           <div className="setores__list-head">
             <h2 className="panel__title">Todos os setores</h2>
@@ -94,77 +134,58 @@ function AdminSetor() {
             <thead>
               <tr>
                 <th scope="col">Setor</th>
-                <th scope="col" className="setores__col-owner">Responsável</th>
+                <th></th>
                 <th scope="col" className="setores__col-members">Membros</th>
               </tr>
             </thead>
             <tbody>
-              {setores.map((setor) => (
+              {carregando && (
+                <tr><td colSpan={3}>Carregando...</td></tr>
+              )}
+              {!carregando && setoresFiltrados.length === 0 && (
+                <tr>
+                  <td colSpan={3}>
+                    {busca ? `Nenhum resultado para "${busca}".` : 'Nenhum setor cadastrado.'}
+                  </td>
+                </tr>
+              )}
+              {setoresFiltrados.map((setor) => (
                 <tr key={setor.setor_id}>
                   <td>
                     <p className="setores__name">{setor.nome}</p>
                   </td>
-                  <td className="setores__owner">{setor.responsavel}</td>
-                  <td className="setores__members">{setor.quantidade_funcionarios}</td>
+                  <td></td>
+                  <td className="setores__members">{setor.quantidade_funcionarios ?? 0}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
           <p className="setores__footer">
-            Exibindo 6 de 6 setores · Aurora Tecnologia
+            Exibindo {setoresFiltrados.length} de {setores.length} setores · {usuario?.razao_social}
           </p>
         </section>
 
-        {/* Formulário */}
         <section className="panel">
           <h2 className="setores__form-title">Cadastrar novo setor</h2>
+
+          {erro && <p role="alert">{erro}</p>}
 
           <form className="setores__form" onSubmit={handleSubmit}>
             <div className="form-field">
               <label className="form-field__label" htmlFor="nome">Nome do setor *</label>
-              <input
-                className="input"
-                id="nome"
-                name="nome"
-                type="text"
-                value={form.nome}
-                onChange={handleChange}
-                required
-              />
+              <input className="input" id="nome" name="nome" type="text"
+                value={form.nome} onChange={handleChange} required />
             </div>
 
-
-            <div className="form-field">
-              <label className="form-field__label" htmlFor="responsavel">Responsável *</label>
-              <div className="input-wrapper">
-                <select
-                  className="input input--icon select"
-                  id="responsavel"
-                  name="responsavel"
-                  value={form.responsavel}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="" />
-                  {/* TODO: listar os funcionários vindos da API */}
-                  <option value="camila">Camila Souza</option>
-                  <option value="rafael">Rafael Mendes</option>
-                  <option value="beatriz">Beatriz Rocha</option>
-                </select>
-                <span className="input-wrapper__icon">
-                  <ChevronDown strokeWidth={1.5} aria-hidden="true" />
-                </span>
-              </div>
-            </div>
 
             <div className="setores__actions">
               <button type="button" className="btn btn--outline" onClick={handleCancel}>
                 Cancelar
               </button>
-              <button type="submit" className="btn btn--primary">
+              <button type="submit" className="btn btn--primary" disabled={enviando}>
                 <Plus size={18} aria-hidden="true" />
-                Cadastrar setor
+                {enviando ? 'Cadastrando...' : 'Cadastrar setor'}
               </button>
             </div>
           </form>

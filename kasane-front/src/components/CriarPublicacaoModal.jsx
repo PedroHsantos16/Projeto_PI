@@ -25,11 +25,19 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    //onSubmit?.(form);
-    api.post("/publicacaos", form);
-    onClose();
+    try
+    {
+      await api.post("/publicacaos", form);
+      onClose();
+    }
+    catch(err)
+    {
+      console.log("Não foi possível publicar");
+    }
+    
+    
   }
 
   return (
