@@ -40,7 +40,6 @@ function DetalhePublicacao() {
     const post = posts.find((p) => p.publicacao_id === id);
     const salvar = !post.salvo;
 
-    // atualiza a tela na hora
     setPosts((prev) =>
       prev.map((p) => (p.publicacao_id === id ? { ...p, salvo: salvar } : p))
     );
@@ -49,7 +48,6 @@ function DetalhePublicacao() {
       if (salvar) await api.post(`/publicacaos/${id}/salvar`);
       else await api.delete(`/publicacaos/${id}/salvar`);
     } catch {
-      // desfaz se der erro
       setPosts((prev) =>
         prev.map((p) => (p.publicacao_id === id ? { ...p, salvo: !salvar } : p))
       );
