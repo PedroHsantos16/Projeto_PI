@@ -1,37 +1,48 @@
 import { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
+import api from '../api/client';
 
 const estadoInicial = {
   titulo: '',
   descricao: '',
-  data_hora: '',
+  horario: '',
 };
 
 /*
   Modal "Criar lembrete".
   Props:
-    onClose  -> função chamada ao cancelar, fechar (X) ou clicar no fundo
-    onSubmit (opcional) -> função chamada com o objeto "form" ao confirmar
+    onClose   -> função chamada ao cancelar, fechar (X) ou clicar no fundo
+    onCriado  (opcional) -> função chamada com o lembrete criado pela API
 */
-function CriarLembreteModal({ onClose, onSubmit }) {
+function CriarLembreteModal({ onClose, onCriado }) {
   const [form, setForm] = useState(estadoInicial);
+  const [enviando, setEnviando] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    // TODO: enviar "form" para a API
-    console.log(form);
-    onSubmit?.(form);
-    onClose();
+    setEnviando(true);
+    try {
+      const { data } = await api.post('/lembretes', {
+        titulo: form.titulo,
+        descricao: form.descricao,
+        horario: form.horario,
+      });
+      onCriado?.(data);
+      onClose();
+    } catch (err) {
+      console.error(err.response?.status, err.response?.data);
+      alert('Não foi possível criar o lembrete.');
+      setEnviando(false);
+    }
   }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      {/* stopPropagation evita fechar ao clicar dentro do modal */}
       <div
         className="modal"
         role="dialog"
@@ -74,14 +85,14 @@ function CriarLembreteModal({ onClose, onSubmit }) {
           </div>
 
           <div className="form-field">
-            <label className="form-field__label" htmlFor="data_hora">Data/hora</label>
+            <label className="form-field__label" htmlFor="horario">Data/hora</label>
             <div className="input-wrapper">
               <input
                 className="input input--icon input--datetime"
-                id="data_hora"
-                name="data_hora"
+                id="horario"
+                name="horario"
                 type="datetime-local"
-                value={form.data_hora}
+                value={form.horario}
                 onChange={handleChange}
                 required
               />
@@ -95,8 +106,8 @@ function CriarLembreteModal({ onClose, onSubmit }) {
             <button type="button" className="btn btn--outline" onClick={onClose}>
               Cancelar
             </button>
-            <button type="submit" className="btn btn--primary">
-              Confirmar
+            <button type="submit" className="btn btn--primary" disabled={enviando}>
+              {enviando ? 'Salvando...' : 'Confirmar'}
             </button>
           </div>
         </form>
