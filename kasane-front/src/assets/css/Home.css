@@ -60,7 +60,6 @@
   display: flex;
   flex-direction: column;
   background-color: var(--color-beige);
-  /* Padrão de ondas: exporte do Figma e salve neste caminho */
   background-image: url('../BackgroundOndulado.svg');
   background-size: cover;
   background-position: center;
