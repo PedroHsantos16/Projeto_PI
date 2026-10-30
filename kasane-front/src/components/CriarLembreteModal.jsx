@@ -54,8 +54,8 @@ function CriarLembreteModal({ onClose, onCriado }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
-      {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
+      {erro && boxNotificacao && <BoxNotificacao mensagem={erro} subtexto="Tente novamente." cor={1} onClose={() => setBoxNotificacao(false)}/>}
+      {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} subtexto="O lembrete já está disponível para visualização!" cor={2} onClose={() => setBoxNotificacao(false)}/>}
 
       <div
         className="modal"

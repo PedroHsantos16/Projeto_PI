@@ -1,6 +1,6 @@
 import { TriangleAlert, CheckCheck, CircleAlert, X } from "lucide-react"
 
-export default function BoxNotificacao({mensagem, cor, onClose}){
+export default function BoxNotificacao({mensagem, subtexto, cor, onClose}){
 
     if(cor === 1) return (
         <div className="box-noti">
@@ -8,10 +8,13 @@ export default function BoxNotificacao({mensagem, cor, onClose}){
                 <TriangleAlert size={30}/>
             </div>
             <p className="box-noti__text">
-                {mensagem}
+                    {mensagem} <br />
+                <div className="box-noti__text-small">
+                    {subtexto}
+                </div>
             </p>
             <button onClick={onClose}>
-                <X size={30} color="#746B65"/>
+                <X size={30}/>
             </button>
         </div>
     )
@@ -22,10 +25,13 @@ export default function BoxNotificacao({mensagem, cor, onClose}){
                 <CheckCheck size={30}/>
             </div>
             <p className="box-noti__text">
-                {mensagem}
+                    {mensagem} <br />
+                <div className="box-noti__text-small">
+                    {subtexto}
+                </div>
             </p>
             <button onClick={onClose}>
-                <X size={30} color="#746B65"/>
+                <X size={30}/>
             </button>
         </div>
     )
@@ -36,10 +42,13 @@ export default function BoxNotificacao({mensagem, cor, onClose}){
                 <CircleAlert size={30}/>
             </div>
             <p className="box-noti__text">
-                {mensagem}
+                    {mensagem} <br />
+                <div className="box-noti__text-small">
+                    {subtexto}
+                </div>
             </p>
             <button onClick={onClose}>
-                <X size={30} color="#746B65"/>
+                <X size={30}/>
             </button>
         </div>
     )

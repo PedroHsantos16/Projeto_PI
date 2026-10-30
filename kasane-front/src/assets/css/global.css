@@ -411,6 +411,15 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
+.box-noti button {
+  color: var(--color-dark);
+}
+
+.box-noti button:hover {
+  color: var(--color-primary);
+}
+
+
 .box-noti__text {
   padding: 0rem 1rem;
   font-size: 1rem;
@@ -419,12 +428,20 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
+.box-noti__text-small {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding-top: 0.1rem;
+  color: var(--color-text-muted);
+  letter-spacing: -0.01em;
+}
+
 .box-noti__icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 0.875rem;
 }
 

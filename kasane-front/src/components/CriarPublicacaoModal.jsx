@@ -34,6 +34,7 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
     event.preventDefault();
     try {
       setEnviando(true);
+      console.log(form);
       await api.post("/publicacaos", form);
       setNotificacao("Post criado com sucesso!");
       setBoxNotificacao(true);
@@ -52,8 +53,8 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
-      {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
+      {erro && boxNotificacao && <BoxNotificacao mensagem={erro} subtexto="Tente novamente." cor={1} onClose={() => setBoxNotificacao(false)}/>}
+      {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} subtexto="Sua mensagem já está disponível para a equipe." cor={2} onClose={() => setBoxNotificacao(false)}/>}
 
       {/* stopPropagation evita fechar ao clicar dentro do modal */}
       <div

@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import '../assets/css/Home.css';
 import KasaneLogo from '../assets/KasaneLogo.svg';
 import { UsersRound, BuildingComplex, ArrowRight } from "lucide-react"
-import BoxNotificacao from '../components/BoxNotificacao';
 
 function Home() {
   const navigate = useNavigate();
@@ -10,6 +9,7 @@ function Home() {
   return (
     
     <main className="welcome">
+    
       {/* Painel vermelho lateral */}
       <aside className="welcome__brand">
         <img className="welcome__logo" src={KasaneLogo} alt="Kasane" />

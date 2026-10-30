@@ -19,6 +19,7 @@ function Publicacoes() {
   const [erro, setErro] = useState(null);
   const [boxNotificacao, setBoxNotificacao] = useState(false);
   const [notificacao, setNotificacao] = useState(null);
+  const [texto, setTexto] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [perfil, setPerfil] = useState(null);
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ function Publicacoes() {
       })
       .catch(() => {
         setErro('Não foi possível carregar as publicações.'); 
+        setTexto("Houve um erro na busca.");
         setBoxNotificacao(true); 
       })
       .finally(() => setCarregando(false));
@@ -47,7 +49,8 @@ function Publicacoes() {
     }
     catch(err)
     {
-      setErro("Não foi possivel abrir o perfil");
+      setErro("Não foi possivel abrir o perfil.");
+      setTexto("Houve um erro na busca.");
       setBoxNotificacao(true);
     }
   }
@@ -66,15 +69,18 @@ function Publicacoes() {
       if (salvar) {
         await api.post(`/publicacaos/${id}/salvar`)
         setBoxNotificacao(true); 
-        setNotificacao("Post Salvo com sucesso");
+        setNotificacao("Post Salvo com sucesso!");
+        setTexto("O post já está disponível em sua página de salvos.");
       }
       else {
         await api.delete(`/publicacaos/${id}/salvar`);
         setBoxNotificacao(true); 
-        setNotificacao("Salvo retirado com sucesso");
+        setNotificacao("Salvo retirado com sucesso!");
+        setTexto("Se necessitar salve novamente.");
       }
     } catch {
-      setErro('Não foi possivel salvar o post.');
+      setErro('Não foi possível salvar o post.');
+      setTexto("Houve um erro no salvamento");
       setBoxNotificacao(true)
       setPosts((prev) =>
         prev.map((p) => (p.publicacao_id === id ? { ...p, salvo: !salvar } : p))
@@ -97,8 +103,8 @@ function Publicacoes() {
         {/* Lista de publicações */}
         <div className="feed__list">
           {carregando && <p>Carregando...</p>}
-          {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
-          {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
+          {erro && boxNotificacao && <BoxNotificacao mensagem={erro} subtexto={texto} cor={1} onClose={() => setBoxNotificacao(false)}/>}
+          {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} subtexto={texto} cor={2} onClose={() => setBoxNotificacao(false)}/>}
 
           {posts.map((post) => (
             <Post
