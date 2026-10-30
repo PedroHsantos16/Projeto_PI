@@ -10,7 +10,6 @@ function Home() {
   return (
     
     <main className="welcome">
-      
       {/* Painel vermelho lateral */}
       <aside className="welcome__brand">
         <img className="welcome__logo" src={KasaneLogo} alt="Kasane" />
