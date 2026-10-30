@@ -8,6 +8,7 @@ import Radar from '../components/Radar';
 import CriarPublicacaoModal from '../components/CriarPublicacaoModal';
 import PerfilFuncionarioModal from '../components/PerfilFuncionarioModal';
 import '../assets/css/feed.css';
+import BoxNotificacao from '../components/BoxNotificacao';
 
 function Salvos() {
   const navigate = useNavigate();
@@ -16,6 +17,8 @@ function Salvos() {
   const [posts, setPosts] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [boxNotificacao, setBoxNotificacao] = useState(false);
+  const [notificacao, setNotificacao] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [perfil, setPerfil] = useState(null);
 
@@ -43,7 +46,8 @@ function Salvos() {
     }
     catch(err)
     {
-      alert("Não foi possivel abrir o perfil")
+      setErro("Não foi possivel abrir o perfil");
+      setBoxNotificacao(true);
     }
   }
 
@@ -52,8 +56,11 @@ function Salvos() {
     setPosts((prev) => prev.filter((p) => p.publicacao_id !== id));
     try {
       await api.delete(`/publicacaos/${id}/salvar`);
+      setBoxNotificacao(true); 
+      setNotificacao("Salvo retirado com sucesso");
     } catch {
-      alert('Não foi possível remover dos salvos.');
+      setErro('Não foi remover dos salvos.');
+      setBoxNotificacao(true)
       carregarPosts();
     }
   }
@@ -91,7 +98,8 @@ function Salvos() {
       <div className="feed__grid">
         <div className="feed__list">
           {carregando && <p>Carregando...</p>}
-          {erro && <p>{erro}</p>}
+          {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
+          {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
 
           {!carregando && !erro && posts.length === 0 && (
             <p className="feed__end">

@@ -386,3 +386,47 @@ h1, h2, h3, h4, h5, h6 {
 .modal--sm {
   max-width: 35rem;
 }
+
+/* Caixa de notificações */
+
+.box-noti {
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: 600px;
+
+  border: 5px solid;
+  border-radius: 999px;
+  box-shadow: 2px 5px 5px 3px rgba(0, 0, 0, 0.2);
+  
+  background-color: var(--color-light);
+  
+  padding: 0.3rem 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.box-noti__text {
+  padding: 0rem 0.5rem;
+}
+
+.box-noti__red {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.box-noti__green {
+  border-color: #B1CF5F;
+  color: #B1CF5F;
+}
+
+.box-noti__gray {
+  border-color: var(--color-text-muted);
+  color: var(--color-text-muted);
+}
+
+

@@ -3,6 +3,7 @@ import { X, ChevronDown, Send } from 'lucide-react';
 import '../assets/css/feed.css';
 import api from '../api/client';
 import { useAuth } from "../context/AuthContext";
+import BoxNotificacao from '../components/BoxNotificacao';
 
 const estadoInicial = {
   titulo: '',
@@ -19,6 +20,10 @@ const estadoInicial = {
 function CriarPublicacaoModal({ onClose, onSubmit }) {
   const [form, setForm] = useState(estadoInicial);
   const { usuario, tipo } = useAuth();
+  const [erro, setErro] = useState(null);
+  const [boxNotificacao, setBoxNotificacao] = useState(false);
+  const [notificacao, setNotificacao] = useState(null);
+  const [enviando, setEnviando] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -27,21 +32,29 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    try
-    {
+    try {
+      setEnviando(true);
       await api.post("/publicacaos", form);
-      onClose();
+      setNotificacao("Post criado com sucesso!");
+      setBoxNotificacao(true);
     }
-    catch(err)
-    {
-      console.log("Não foi possível publicar");
+    catch(err) {
+      console.error(err.response?.status, err.response?.data);
+      setEnviando(false);
+      setErro("Não foi possível criar o post.");
+      setBoxNotificacao(true);
+    } 
+    finally {
+      setEnviando(false);
     }
-    
     
   }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
+      {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
+      {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
+
       {/* stopPropagation evita fechar ao clicar dentro do modal */}
       <div
         className="modal"
@@ -120,7 +133,7 @@ function CriarPublicacaoModal({ onClose, onSubmit }) {
             </button>
             <button type="submit" className="btn btn--primary">
               <Send size={18} strokeWidth={1.5} aria-hidden="true" />
-              Publicar
+              {enviando ? 'Publicando...' : 'Publicar'}
             </button>
           </div>
         </form>

@@ -8,20 +8,17 @@ import '../assets/css/feed.css';
 import CriarPublicacaoModal from '../components/CriarPublicacaoModal';
 import PerfilFuncionarioModal from '../components/PerfilFuncionarioModal';
 import { useNavigate } from 'react-router-dom';
+import BoxNotificacao from '../components/BoxNotificacao';
 
 const setor = 'geral';
-
-const lembretes = [
-  { id: 1, data: '21 out', titulo: 'Atualizar seus dados', detalhe: 'Hoje, até 18h' },
-  { id: 2, data: '23 out', titulo: 'Pesquisa de clima', detalhe: 'Sexta, até 18h' },
-  { id: 3, data: '23 out', titulo: 'Café entre setores', detalhe: 'Sexta, às 15h' },
-];
 
 function Publicacoes() {
   const [busca, setBusca] = useState('');
   const [posts, setPosts] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [boxNotificacao, setBoxNotificacao] = useState(false);
+  const [notificacao, setNotificacao] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [perfil, setPerfil] = useState(null);
   const navigate = useNavigate();
@@ -29,8 +26,14 @@ function Publicacoes() {
   useEffect(() => {
     api
       .get("/publicacaos", { params: { setor, busca } })
-      .then((res) => setPosts(res.data), setErro(null))
-      .catch(() => setErro('Não foi possível carregar as publicações.'))
+      .then((res) => {
+        setPosts(res.data);
+        setErro(null); 
+      })
+      .catch(() => {
+        setErro('Não foi possível carregar as publicações.'); 
+        setBoxNotificacao(true); 
+      })
       .finally(() => setCarregando(false));
   }, [busca]);
 
@@ -44,7 +47,8 @@ function Publicacoes() {
     }
     catch(err)
     {
-      alert("Não foi possivel abrir o perfil")
+      setErro("Não foi possivel abrir o perfil");
+      setBoxNotificacao(true);
     }
   }
 
@@ -59,10 +63,19 @@ function Publicacoes() {
     );
 
     try {
-      if (salvar) await api.post(`/publicacaos/${id}/salvar`);
-      else await api.delete(`/publicacaos/${id}/salvar`);
+      if (salvar) {
+        await api.post(`/publicacaos/${id}/salvar`)
+        setBoxNotificacao(true); 
+        setNotificacao("Post Salvo com sucesso");
+      }
+      else {
+        await api.delete(`/publicacaos/${id}/salvar`);
+        setBoxNotificacao(true); 
+        setNotificacao("Salvo retirado com sucesso");
+      }
     } catch {
-      // desfaz se der erro
+      setErro('Não foi possivel salvar o post.');
+      setBoxNotificacao(true)
       setPosts((prev) =>
         prev.map((p) => (p.publicacao_id === id ? { ...p, salvo: !salvar } : p))
       );
@@ -84,7 +97,8 @@ function Publicacoes() {
         {/* Lista de publicações */}
         <div className="feed__list">
           {carregando && <p>Carregando...</p>}
-          {erro && <p>{erro}</p>}
+          {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
+          {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
 
           {posts.map((post) => (
             <Post

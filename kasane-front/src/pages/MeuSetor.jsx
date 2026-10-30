@@ -8,6 +8,7 @@ import Radar from '../components/Radar';
 import CriarPublicacaoModal from '../components/CriarPublicacaoModal';
 import PerfilFuncionarioModal from '../components/PerfilFuncionarioModal';
 import '../assets/css/feed.css';
+import BoxNotificacao from '../components/BoxNotificacao';
 
 const SETOR = 'meu-setor';
 
@@ -18,6 +19,8 @@ function MeuSetor() {
   const [posts, setPosts] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [boxNotificacao, setBoxNotificacao] = useState(false);
+  const [notificacao, setNotificacao] = useState(null);
   const [modalAberto, setModalAberto] = useState(false);
   const [perfil, setPerfil] = useState(null);
 
@@ -46,7 +49,8 @@ function MeuSetor() {
     }
     catch(err)
     {
-      alert("Não foi possivel abrir o perfil")
+      setErro("Não foi possivel abrir o perfil");
+      setBoxNotificacao(true);
     }
   }
 
@@ -60,10 +64,19 @@ function MeuSetor() {
     );
 
     try {
-      if (salvar) await api.post(`/publicacaos/${id}/salvar`);
-      else await api.delete(`/publicacaos/${id}/salvar`);
+      if (salvar) {
+        await api.post(`/publicacaos/${id}/salvar`)
+        setBoxNotificacao(true); 
+        setNotificacao("Post Salvo com sucesso");
+      }
+      else {
+        await api.delete(`/publicacaos/${id}/salvar`);
+        setBoxNotificacao(true); 
+        setNotificacao("Salvo retirado com sucesso");
+      }
     } catch {
-      // desfaz se der erro
+      setErro('Não foi possivel salvar o post.');
+      setBoxNotificacao(true)
       setPosts((prev) =>
         prev.map((p) => (p.publicacao_id === id ? { ...p, salvo: !salvar } : p))
       );
@@ -86,7 +99,8 @@ function MeuSetor() {
       <div className="feed__grid">
         <div className="feed__list">
           {carregando && <p>Carregando...</p>}
-          {erro && <p>{erro}</p>}
+          {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
+          {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
 
           {!carregando && !erro && posts.length === 0 && (
             <p className="feed__end">

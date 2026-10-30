@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import api from '../api/client';
+import BoxNotificacao from '../components/BoxNotificacao';
 
 const estadoInicial = {
   titulo: '',
@@ -17,6 +18,9 @@ const estadoInicial = {
 function CriarLembreteModal({ onClose, onCriado }) {
   const [form, setForm] = useState(estadoInicial);
   const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState(null);
+  const [boxNotificacao, setBoxNotificacao] = useState(false);
+  const [notificacao, setNotificacao] = useState(null);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -33,16 +37,26 @@ function CriarLembreteModal({ onClose, onCriado }) {
         horario: form.horario,
       });
       onCriado?.(data);
-      onClose();
-    } catch (err) {
+      setNotificacao("Lembrete criado com sucesso!");
+      setBoxNotificacao(true);
+    } 
+    catch (err) {
       console.error(err.response?.status, err.response?.data);
-      alert('Não foi possível criar o lembrete.');
+      setErro("Não foi possível criar o lembrete.");
+      setBoxNotificacao(true);
+      setEnviando(false);
+    } 
+    finally {
       setEnviando(false);
     }
+    
   }
 
   return (
     <div className="modal-overlay" onClick={onClose}>
+      {erro && boxNotificacao && <BoxNotificacao mensagem={erro} cor={1} onClose={() => setBoxNotificacao(false)}/>}
+      {notificacao && boxNotificacao && <BoxNotificacao mensagem={notificacao} cor={2} onClose={() => setBoxNotificacao(false)}/>}
+
       <div
         className="modal"
         role="dialog"
