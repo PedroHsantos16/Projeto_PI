@@ -2,7 +2,6 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../assets/css/tela-carregamento.css';
 import '../assets/css/global.css';
-import loading from '../assets/loading.gif'
 
 function RotaPrivada({ children, perm }) {
   const { usuario, carregando, tipo } = useAuth();
